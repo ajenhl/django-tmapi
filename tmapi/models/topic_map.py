@@ -15,10 +15,9 @@ class TopicMap (Reifiable):
 
     """Represents a topic map item."""
 
-    # item_identifier is the same as that defined in
-    # construct.ConstructFields.
-    item_identifier = models.CharField(max_length=512, unique=True, blank=True,
-                                       null=True)
+    # item_identifiers duplicates that defined in construct_fields.py.
+    item_identifiers = models.ManyToManyField('ItemIdentifier',
+                                              related_name='topic_map')
     iri = models.CharField(max_length=512)
     title = models.CharField(max_length=128, blank=True)
     base_address = models.CharField(max_length=512, blank=True)
@@ -110,7 +109,7 @@ class TopicMap (Reifiable):
             except Topic.DoesNotExist:
                 topic = Topic(topic_map=self)
                 topic.save()
-            ii = ItemIdentifier(address=reference)
+            ii = ItemIdentifier(address=reference, topic_map=self)
             ii.save()
             topic.item_identifiers.add(ii)
         return topic            
@@ -187,6 +186,23 @@ class TopicMap (Reifiable):
 
         """
         return self.association_constructs.all()
+
+    def get_construct_by_item_identifier (self, item_identifier):
+        """Returns a `Construct` by its item identifier.
+
+        :param item_identifier: the item identifier of the construct
+          to be returned
+        :type item_identifier: `Locator`
+        :rtype: a construct or None
+
+        """
+        address = item_identifier.to_external_form()
+        try:
+            ii = ItemIdentifier.objects.get(address=address, topic_map=self)
+            construct = ii.get_construct()
+        except ItemIdentifier.DoesNotExist:
+            construct = None
+        return construct
     
     def get_locator (self):
         """Returns the `Locator` that was used to create the topic map.

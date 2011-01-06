@@ -1,3 +1,8 @@
+from tmapi.exceptions import ModelConstraintException
+
+from item_identifier import ItemIdentifier
+
+
 class Construct (object):
 
     # Properly item_identifier and topic_map fields should be defined
@@ -20,7 +25,21 @@ class Construct (object):
           has an item identifier which is equal to `item_identifier`
         
         """
-        raise Exception('Not yet implemented.')
+        if item_identifier is None:
+            raise ModelConstraintException
+        address = item_identifier.to_external_form()
+        try:
+            topic_map = self.topic_map
+        except AttributeError:
+            topic_map = self
+        try:
+            existing = ItemIdentifier.objects.get(
+                address=address, containing_topic_map=topic_map)
+        except ItemIdentifier.DoesNotExist:
+            ii = ItemIdentifier(address=address,
+                                containing_topic_map=topic_map)
+            ii.save()
+            self.item_identifiers.add(ii)
 
     def get_id (self):
         """Returns the identifier of this construct.
@@ -80,4 +99,14 @@ class Construct (object):
         :type item_identifier: `Locator`
 
         """
-        raise Exception('Not yet implemented.')
+        address = item_identifier.to_external_form()
+        try:
+            topic_map = self.topic_map
+        except AttributeError:
+            topic_map = self
+        try:
+            ii = ItemIdentifier.objects.get(
+                address=address, containing_topic_map=topic_map)
+            ii.delete()
+        except ItemIdentifier.DoesNotExist:
+            pass

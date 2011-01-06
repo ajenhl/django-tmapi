@@ -12,14 +12,6 @@ class TopicMapTest (TestCase):
         self.tms = TopicMapSystem()
         self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
     
-    def test_get_topic_map (self):
-        """Verify that a topic map instance returns itself on get_topic_map."""
-        self.assertEqual(self.tm, self.tm.get_topic_map())
-
-    def test_get_parent (self):
-        """Verify that a topic map instance returns None on get_parent."""
-        self.assertEqual(None, self.tm.get_parent())
-
     def test_topic_creation_subject_identifier (self):
         locator = self.tms.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
