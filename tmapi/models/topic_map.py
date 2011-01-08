@@ -109,7 +109,7 @@ class TopicMap (Reifiable):
             except Topic.DoesNotExist:
                 topic = Topic(topic_map=self)
                 topic.save()
-            ii = ItemIdentifier(address=reference, topic_map=self)
+            ii = ItemIdentifier(address=reference, containing_topic_map=self)
             ii.save()
             topic.item_identifiers.add(ii)
         return topic            
@@ -198,7 +198,8 @@ class TopicMap (Reifiable):
         """
         address = item_identifier.to_external_form()
         try:
-            ii = ItemIdentifier.objects.get(address=address, topic_map=self)
+            ii = ItemIdentifier.objects.get(address=address,
+                                            containing_topic_map=self)
             construct = ii.get_construct()
         except ItemIdentifier.DoesNotExist:
             construct = None
