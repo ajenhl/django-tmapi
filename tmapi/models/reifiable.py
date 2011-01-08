@@ -1,5 +1,7 @@
 from django.db import models
 
+from tmapi.exceptions import ModelConstraintException
+
 from construct import Construct
 
 
@@ -8,7 +10,7 @@ class Reifiable (Construct, models.Model):
     """Indicates that a `Construct` is reifiable. Every Topic Maps
     construct that is not a `Topic` is reifiable."""
 
-    reifier = models.OneToOneField('Topic', related_name='reified_%(class)ss',
+    reifier = models.OneToOneField('Topic', related_name='reified_%(class)s',
                                    null=True)
 
     class Meta:
@@ -36,5 +38,14 @@ class Reifiable (Construct, models.Model):
           reifies another construct
 
         """
-        self.reifier = reifier
-        self.save()
+        if reifier is None:
+            reified = None
+        else:
+            reified = reifier.get_reified()
+        if reified is None:
+            self.reifier = reifier
+            self.save()
+        elif reified == self:
+            pass
+        else:
+            raise ModelConstraintException
