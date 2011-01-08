@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from tmapi.constants import XSD_ANY_URI
 from tmapi.exceptions import ModelConstraintException
 from tmapi.models import TopicMapSystem
 
@@ -51,8 +52,22 @@ class NameTest (TestCase):
         topic = self.tm.create_topic()
         name = topic.create_name('Name')
         theme = self.tm.create_topic()
-        xsd_any_uri = self.tm.create_locator(
-            'http://www.w3.org/2001/XMLSchema#anyURI')
+        xsd_any_uri = self.tm.create_locator(XSD_ANY_URI)
         value = self.tm.create_locator('http://www.example.org/')
-        variant = name.create_variant(value, theme)
-        
+        variant = name.create_variant(value, [theme])
+        self.assertEqual(value.get_reference(), variant.get_value())
+        self.assertEqual(value, variant.locator_value())
+        self.assertEqual(xsd_any_uri, variant.get_datatype())
+        self.assertEqual(1, variant.get_scope().count())
+        self.assertTrue(theme in variant.get_scope())
+
+    def test_variant_creation_explicit_datatype (self):
+        topic = self.tm.create_topic()
+        name = topic.create_name('Name')
+        theme = self.tm.create_topic()
+        dt = self.tm.create_locator('http://www.example.org/datatype')
+        variant = name.create_variant('Variant', [theme], dt)
+        self.assertEqual('Variant', variant.get_value())
+        self.assertEqual(dt, variant.get_datatype())
+        self.assertEqual(1, variant.get_scope().count())
+        self.assertTrue(theme in variant.get_scope())
