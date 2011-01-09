@@ -1,5 +1,7 @@
 from django.db import models
 
+from tmapi.exceptions import ModelConstraintException
+
 from construct import Construct
 
 
@@ -29,5 +31,7 @@ class Typed (Construct, models.Model):
           nature of this construct
 
         """
+        if construct_type is None:
+            raise ModelConstraintException
         self.type = construct_type
         self.save()
