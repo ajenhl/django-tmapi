@@ -2,10 +2,13 @@
 
 from django.db import models
 
+from tmapi.constants import XSD_ANY_URI, XSD_STRING
+
 from construct import Construct
 from construct_fields import ConstructFields
 from locator import Locator
 from name import Name
+from occurrence import Occurrence
 
 
 class Topic (Construct, ConstructFields):
@@ -17,7 +20,6 @@ class Topic (Construct, ConstructFields):
 
     class Meta:
         app_label = 'tmapi'
-
     
     def add_subject_identifier (self, subject_identifier):
         """Adds a subject identifier to this topic.
@@ -66,6 +68,35 @@ class Topic (Construct, ConstructFields):
                     type=type)
         name.save()
         return name
+
+    def create_occurrence (self, type, value, scope=None, datatype=None):
+        """Creates an `Occurrence` for this topic with the specified
+        `type`, `value`, and `scope`.
+
+        If `datatype` is not None, the newly created `Occurrence` will
+        have the datatype specified by `datatype`.
+
+        :param type: the occurrence type
+        :type type: `Topic`
+        :param value: the value of the occurrence
+        :type value: String or `Locator`
+        :param scope: optional list of themes
+        :type scope: list of `Topic`s
+        :param datatype: optional locator indicating the datatype of `value`
+        :type datatype: `Locator`
+        :rtype: `Occurrence`
+        
+        """
+        if datatype is None:
+            if isinstance(value, Locator):
+                datatype = Locator(XSD_ANY_URI)
+            else:
+                datatype = Locator(XSD_STRING)
+        occurrence = Occurrence(type=type, value=value,
+                                datatype=datatype.to_external_form(),
+                                topic=self, topic_map=self.topic_map)
+        occurrence.save()
+        return occurrence
     
     def get_names (self, name_type=None):
         """Returns a QuerySet of the names of this topic.
@@ -102,6 +133,24 @@ class Topic (Construct, ConstructFields):
 
         """
         return self.topic_map
+
+    def get_reified (self):
+        """Returns the `Construct` which is reified by this topic.
+
+        :rtype: `Construct` or None
+
+        """
+        reified = None
+        reifiable_types = (
+            'reified_association', 'reified_name', 'reified_occurrence',
+            'reified_role', 'reified_topicmap', 'reified_variant')
+        for reifiable_type in reifiable_types:
+            try:
+                reified = getattr(self, reifiable_type)
+                break
+            except:
+                pass
+        return reified
         
     def get_roles_played (self, role_type=None, association_type=None):
         """Returns the roles played by this topic.
