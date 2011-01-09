@@ -3,6 +3,7 @@
 from django.db import models
 
 from tmapi.constants import XSD_ANY_URI, XSD_STRING
+from tmapi.exceptions import ModelConstraintException
 
 from construct import Construct
 from construct_fields import ConstructFields
@@ -37,9 +38,16 @@ class Topic (Construct, ConstructFields):
         """
         raise Exception('Not yet implemented')
     
-    def add_type (self, topic_type):
-        """Adds a type to this topic."""
-        self.types.add(topic_type)
+    def add_type (self, type):
+        """Adds a type to this topic.
+
+        :param type: the type of which this topic should become an instance
+        :type type: `Topic`
+        
+        """
+        if self.topic_map != type.topic_map:
+            raise ModelConstraintException
+        self.types.add(type)
 
     def create_name (self, value, type=None, scope=None):
         """Creates a `Name` for this topic with the specified `value`,
