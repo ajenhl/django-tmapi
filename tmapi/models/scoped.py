@@ -1,5 +1,7 @@
 from django.db import models
 
+from tmapi.exceptions import ModelConstraintException
+
 from construct import Construct
 
 
@@ -22,6 +24,8 @@ class Scoped (Construct, models.Model):
         :type theme: `Topic`
 
         """
+        if theme is None:
+            raise ModelConstraintException
         self.scope.add(theme)
         
     def get_scope (self):
@@ -40,4 +44,4 @@ class Scoped (Construct, models.Model):
         :type theme: `Topic`
 
         """
-        raise Exception('Not yet implemented')
+        self.scope.remove(theme)
