@@ -37,7 +37,7 @@ class ConstructTest (TestCase):
         self.assertEqual(tm, construct.get_topic_map())
         id = construct.get_id()
         self.assertEqual(construct, tm.get_construct_by_id(id),
-                         'Unexpected result')
+                         'Unexpected result from get_construct_by_id')
 
     def test_topic_map (self):
         """Construct tests against a topic map."""
