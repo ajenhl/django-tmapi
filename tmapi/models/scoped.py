@@ -26,6 +26,8 @@ class Scoped (Construct, models.Model):
         """
         if theme is None:
             raise ModelConstraintException
+        if self.topic_map != theme.get_topic_map():
+            raise ModelConstraintException
         self.scope.add(theme)
         
     def get_scope (self):
