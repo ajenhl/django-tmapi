@@ -45,6 +45,8 @@ class Topic (Construct, ConstructFields):
         :type type: `Topic`
         
         """
+        if type is None:
+            raise ModelConstraintException
         if self.topic_map != type.topic_map:
             raise ModelConstraintException
         self.types.add(type)
