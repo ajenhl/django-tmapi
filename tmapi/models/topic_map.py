@@ -41,11 +41,15 @@ class TopicMap (BaseConstructFields, Reifiable):
         """
         if association_type is None:
             raise ModelConstraintException
+        if self != association_type.topic_map:
+            raise ModelConstraintException
         association = Association(type=association_type, topic_map=self)
         association.save()
         if scope is None:
             scope = []
         for topic in scope:
+            if self != topic.topic_map:
+                raise ModelConstraintException
             association.scope.add(topic)
         return association
         
