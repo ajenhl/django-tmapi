@@ -1,15 +1,17 @@
 from django.db import models
 
+from tmapi.constants import XSD_ANY_URI, XSD_STRING
 from tmapi.exceptions import ModelConstraintException
 
 from construct_fields import ConstructFields
 from locator import Locator
+from reifiable import Reifiable
 from scoped import Scoped
 from typed import Typed
 from variant import Variant
 
 
-class Name (ConstructFields, Scoped, Typed):
+class Name (ConstructFields, Reifiable, Scoped, Typed):
 
     """Represents a topic name item."""
     
@@ -29,15 +31,20 @@ class Name (ConstructFields, Scoped, Typed):
         The newly created `Variant` will contain all themes from the
         parent name and the themes specified in `scope`.
 
-        :param value: the string value
-        :type value: string
+        :param value: the string value or locator which represents an IRI
+        :type value: string or `Locator`
         :param scope: list of themes
         :type scope: list of `Topic`s
         :rtype: `Variant`
 
         """
         if datatype is None:
-            datatype = Locator('http://www.w3.org/2001/XMLSchema#string')
+            if isinstance(value, Locator):
+                datatype = Locator(XSD_ANY_URI)
+            elif isinstance(value, str):
+                datatype = Locator(XSD_STRING)
+        if isinstance(value, Locator):
+            value = value.to_external_form()
         variant = Variant(name=self, datatype=datatype.to_external_form(),
                           value=value, topic_map=self.topic_map)
         variant.save()
@@ -55,7 +62,7 @@ class Name (ConstructFields, Scoped, Typed):
 
     def get_variants (self):
         """Returns the variants defined for this name."""
-        return self.variant_names.all()
+        return self.variants.all()
     
     def set_value (self, value):
         """Sets the value of this name. The previous value is overridden."""
