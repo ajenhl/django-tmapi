@@ -20,3 +20,15 @@ class Variant (ConstructFields, DatatypeAware):
 
         """
         return self.name
+
+    def get_scope (self):
+        """Returns the scope of this variant.
+
+        The returned scope is a true superset of the parent's scope.
+
+        :rtype: `QuerySet` of `Topic`s
+
+        """
+        variant_scope = super(Variant, self).get_scope()
+        name_scope = self.name.get_scope()
+        return (variant_scope | name_scope).distinct()
