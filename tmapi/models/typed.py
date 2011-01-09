@@ -33,5 +33,7 @@ class Typed (Construct, models.Model):
         """
         if construct_type is None:
             raise ModelConstraintException
+        if self.topic_map != construct_type.topic_map:
+            raise ModelConstraintException
         self.type = construct_type
         self.save()
