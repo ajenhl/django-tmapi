@@ -28,6 +28,8 @@ class Topic (Construct, ConstructFields):
         :param subject_identifier: the subject identifier to be added
         
         """
+        if subject_identifier is None:
+            raise ModelConstraintException
         raise Exception('Not yet implemented')
 
     def add_subject_locator (self, subject_locator):
@@ -36,6 +38,8 @@ class Topic (Construct, ConstructFields):
         :param subject_locator: the subject locator to be added
 
         """
+        if subject_locator is None:
+            raise ModelConstraintException
         raise Exception('Not yet implemented')
     
     def add_type (self, type):
@@ -71,6 +75,8 @@ class Topic (Construct, ConstructFields):
         :rtype: `Name`
 
         """
+        if value is None:
+            raise ModelConstraintException
         if type is None:
             type = self.topic_map.create_topic_by_subject_identifier(
                 Locator('http://psi.topicmaps.org/iso13250/model/topic-name'))
@@ -104,6 +110,10 @@ class Topic (Construct, ConstructFields):
         :rtype: `Occurrence`
         
         """
+        if type is None:
+            raise ModelConstraintException
+        if value is None:
+            raise ModelConstraintException
         if datatype is None:
             if isinstance(value, Locator):
                 datatype = Locator(XSD_ANY_URI)
@@ -195,9 +205,9 @@ class Topic (Construct, ConstructFields):
         """
         roles = []
         if role_type is not None:
-            roles = self.role_players.filter(type__pk=role_type.id)
+            roles = self.role_players.filter(type=role_type)
             if association_type is not None:
-                roles = roles.filter()
+                roles = roles.filter(association__type=association_type)
         elif association_type is not None:
             raise Exception('This is a broken call to get_roles_played, specifying an assocation type but not a role type')
         else:
