@@ -72,11 +72,15 @@ class Topic (Construct, ConstructFields):
         if type is None:
             type = self.topic_map.create_topic_by_subject_identifier(
                 Locator('http://psi.topicmaps.org/iso13250/model/topic-name'))
+        elif self.topic_map != type.topic_map:
+            raise ModelConstraintException
         name = Name(topic=self, value=value, topic_map=self.topic_map,
                     type=type)
         name.save()
         if scope is not None:
             for theme in scope:
+                if self.topic_map != theme.topic_map:
+                    raise ModelConstraintException
                 name.scope.add(theme)
         return name
 
