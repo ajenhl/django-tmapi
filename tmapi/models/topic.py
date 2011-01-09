@@ -107,10 +107,17 @@ class Topic (Construct, ConstructFields):
                 datatype = Locator(XSD_ANY_URI)
             else:
                 datatype = Locator(XSD_STRING)
+        if self.topic_map != type.topic_map:
+            raise ModelConstraintException
         occurrence = Occurrence(type=type, value=value,
                                 datatype=datatype.to_external_form(),
                                 topic=self, topic_map=self.topic_map)
         occurrence.save()
+        if scope is not None:
+            for theme in scope:
+                if self.topic_map != theme.topic_map:
+                    raise ModelConstraintException
+                occurrence.scope.add(theme)
         return occurrence
     
     def get_names (self, name_type=None):
