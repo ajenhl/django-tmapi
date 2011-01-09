@@ -5,6 +5,7 @@ from name_tests import *
 from occurrence_tests import *
 from reifiable_tests import *
 from role_tests import *
+from scoped_tests import *
 from topic_map_system_tests import *
 from topic_map_tests import *
 from topic_tests import *
