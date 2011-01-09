@@ -67,6 +67,9 @@ class Topic (Construct, ConstructFields):
         name = Name(topic=self, value=value, topic_map=self.topic_map,
                     type=type)
         name.save()
+        if scope is not None:
+            for theme in scope:
+                name.scope.add(theme)
         return name
 
     def create_occurrence (self, type, value, scope=None, datatype=None):
