@@ -110,11 +110,8 @@ class TopicTest (TestCase):
         self.assertEqual(0, player.get_roles_played(unused_type).count())
 
     def test_role_filter_illegal (self):
-        association = self.tm.create_association(self.tm.create_topic())
-        role = association.create_role(self.tm.create_topic(),
-                                       self.tm.create_topic())
-        player = role.get_player()
-        self.assertRaises(TypeError, player.get_roles_played, None)
+        # This test seems inapplicable in Python.
+        pass
 
     def test_role_association_filter (self):
         player = self.tm.create_topic()
@@ -362,9 +359,8 @@ class TopicTest (TestCase):
                           self.tm.create_topic(), None)
 
     def test_occurrence_creation_type_illegal_datatype (self):
-        topic = self.tm.create_topic()
-        self.assertRaises(ModelConstraintException, topic.create_occurrence,
-                          self.tm.create_topic(), 'Occurrence', datatype=None)
+        # This test seems inapplicable in Python.
+        pass
 
     def test_occurrence_creation_illegal_type (self):
         topic = self.tm.create_topic()
@@ -480,9 +476,8 @@ class TopicTest (TestCase):
                           None, self.tm.create_topic())
 
     def test_name_creation_type_illegal_scope (self):
-        topic = self.tm.create_topic()
-        self.assertRaises(ModelConstraintException, topic.create_name,
-                          'Name', self.tm.create_topic(), None)
+        # This test seems inapplicable in Python.
+        pass
 
     def test_name_creation_default_type_illegal_string (self):
         topic = self.tm.create_topic()
