@@ -28,12 +28,12 @@ class ItemIdentifier (LocatorBase, models.Model):
     def get_construct (self):
         """Returns the `Construct` that this is an item identifier for.
 
-        :rtype: `Construct`
+        :rtype: `Construct` or None
 
         """
         construct = None
         construct_types = ('association', 'name', 'occurrence', 'role',
-                           'topic', 'topic_map', 'variant')
+                           'topic', 'topicmap', 'variant')
         for construct_type in construct_types:
             manager = getattr(self, construct_type)
             try:

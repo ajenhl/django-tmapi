@@ -11,6 +11,7 @@ from association import Association
 from construct import Construct
 from construct_fields import ConstructFields
 from datatype_aware import DatatypeAware
+from identifier import Identifier
 from item_identifier import ItemIdentifier
 from locator import Locator
 from name import Name

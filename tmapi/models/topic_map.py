@@ -3,6 +3,8 @@ from django.db import models
 from tmapi.exceptions import ModelConstraintException
 
 from association import Association
+from construct_fields import BaseConstructFields
+from identifier import Identifier
 from item_identifier import ItemIdentifier
 from locator import Locator
 from reifiable import Reifiable
@@ -11,13 +13,15 @@ from subject_locator import SubjectLocator
 from topic import Topic
 
 
-class TopicMap (Reifiable):
+class TopicMap (BaseConstructFields, Reifiable):
 
     """Represents a topic map item."""
 
+    # identifier duplicates that defined in consutrct_fields.py.
+    #identifier = models.OneToOneField('Identifier', related_name='topic_map')
     # item_identifiers duplicates that defined in construct_fields.py.
-    item_identifiers = models.ManyToManyField('ItemIdentifier',
-                                              related_name='topic_map')
+    #item_identifiers = models.ManyToManyField('ItemIdentifier',
+    #                                          related_name='topic_map')
     iri = models.CharField(max_length=512)
     title = models.CharField(max_length=128, blank=True)
     base_address = models.CharField(max_length=512, blank=True)
@@ -187,6 +191,22 @@ class TopicMap (Reifiable):
         """
         return self.association_constructs.all()
 
+    def get_construct_by_id (self, id):
+        """Returns a `Construct` by its (system specific) identifier.
+
+        :param id: the identifier of the construct to be returned
+        :type id: string
+        :rtype: `Construct` or None
+        
+        """
+        try:
+            identifier = Identifier.objects.get(pk=id,
+                                                containing_topic_map=self)
+            construct = identifier.get_construct()
+        except Identifier.DoesNotExist:
+            construct = None
+        return construct
+    
     def get_construct_by_item_identifier (self, item_identifier):
         """Returns a `Construct` by its item identifier.
 
@@ -282,5 +302,3 @@ class TopicMap (Reifiable):
 
     def remove (self):
         self.delete()
-
-    

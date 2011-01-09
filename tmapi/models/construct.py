@@ -28,10 +28,7 @@ class Construct (object):
         if item_identifier is None:
             raise ModelConstraintException
         address = item_identifier.to_external_form()
-        try:
-            topic_map = self.topic_map
-        except AttributeError:
-            topic_map = self
+        topic_map = self.get_topic_map()
         try:
             existing = ItemIdentifier.objects.get(
                 address=address, containing_topic_map=topic_map)
@@ -52,7 +49,7 @@ class Construct (object):
         :rtype: String
         
         """
-        raise Exception('Not yet implemented.')
+        return self.identifier.pk
 
     def get_item_identifiers (self):
         """Returns the item identifiers of this Topic Maps construct.
