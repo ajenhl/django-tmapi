@@ -24,7 +24,7 @@ class VariantTest (DatatypeAwareAbstractTestCase):
                          'Expected variant list size to decrement for name')
 
     def test_scope_property (self):
-        """Tests if hte variant's scope contains the name's scope."""
+        """Tests if the variant's scope contains the name's scope."""
         name = self.tm.create_topic().create_name('Name')
         self.assertEqual(0, name.get_scope().count())
         variant_theme = self.tm.create_topic()
@@ -73,7 +73,7 @@ class VariantTest (DatatypeAwareAbstractTestCase):
         even if the variant's theme is removed."""
         theme = self.tm.create_topic()
         variant_theme = self.tm.create_topic()
-        name = self.tm.create_topic('Name', scope=[theme])
+        name = self.tm.create_topic().create_name('Name', scope=[theme])
         self.assertEqual(1, name.get_scope().count())
         self.assertTrue(theme in name.get_scope())
         variant = name.create_variant('Variant', [theme, variant_theme])
@@ -91,5 +91,5 @@ class VariantTest (DatatypeAwareAbstractTestCase):
         self.assertEqual(0, name.get_scope().count())
         self.assertEqual(1, variant.get_scope().count(),
                          '"theme" was removed from the name')
-        self.assertFalse(theme not in variant.get_scope())
-        self.assertTRue(variant_theme in variant.get_scope())
+        self.assertFalse(theme in variant.get_scope())
+        self.assertTrue(variant_theme in variant.get_scope())
