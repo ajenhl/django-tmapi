@@ -9,6 +9,7 @@ from same_topic_map_tests import *
 from scoped_tests import *
 from topic_map_system_tests import *
 from topic_map_tests import *
+from topic_removable_constraint_tests import *
 from topic_tests import *
 from typed_tests import *
 from variant_tests import *
