@@ -109,10 +109,10 @@ class ReifiableTest (TestCase):
 
     def test_variant (self):
         name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [])
+        variant = name.create_variant('Variant', [self.tm.create_topic()])
         self._test_reification(variant)
 
     def test_variant_reification_collision (self):
         name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [])
+        variant = name.create_variant('Variant', [self.tm.create_topic()])
         self._test_reification_collision(variant)

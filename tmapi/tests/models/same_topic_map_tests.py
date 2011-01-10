@@ -68,8 +68,9 @@ class SameTopicMapTest (TestCase):
         self._test_illegal_theme(self.tm.create_topic().create_name('value'))
 
     def test_variant_illegal_theme (self):
-        self._test_illegal_theme(self.tm.create_topic().create_name('value').
-                                 create_variant('value', []))
+        name = self.tm.create_topic().create_name('value')
+        self._test_illegal_theme(name.create_variant(
+                'value', [self.tm.create_topic()]))
 
     def _test_illegal_type (self, typed):
         self.assertRaises(ModelConstraintException, typed.set_type,
@@ -123,7 +124,8 @@ class SameTopicMapTest (TestCase):
 
     def test_variant_illegal_reifier (self):
         name = self.tm.create_topic().create_name('value')
-        self._test_illegal_reifier(name.create_variant('value', []))
+        self._test_illegal_reifier(name.create_variant(
+                'value', [self.tm.create_topic()]))
 
     def test_illegal_topic_type (self):
         self.assertRaises(

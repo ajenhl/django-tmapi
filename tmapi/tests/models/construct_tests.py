@@ -75,5 +75,5 @@ class ConstructTest (TestCase):
     def test_variant (self):
         """Construct tests against a variant."""
         name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [])
+        variant = name.create_variant('Variant', [self.tm.create_topic()])
         self._test_construct(variant)

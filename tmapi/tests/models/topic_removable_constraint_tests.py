@@ -127,12 +127,14 @@ class TopicRemovableConstraintTest (TestCase):
     def test_used_as_variant_theme (self):
         """Variant theme removable constraint test."""
         name = self.tm.create_topic().create_name('value')
-        self._test_scoped(name.create_variant('value', []))
+        self._test_scoped(name.create_variant('value',
+                                              [self.tm.create_topic()]))
 
     def test_used_variant_reifier (self):
         """Variant reifier removable constraint test."""
         name = self.tm.create_topic().create_name('value')
-        self._test_reifiable(name.create_variant('value', []))
+        self._test_reifiable(name.create_variant('value',
+                                                 [self.tm.create_topic()]))
 
     def test_used_as_topic_type (self):
         """Tests if the removable constraint is respected if a topic

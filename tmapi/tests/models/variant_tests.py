@@ -5,7 +5,7 @@ class VariantTest (DatatypeAwareAbstractTestCase):
 
     def get_datatype_aware (self):
         name = self.tm.create_topic().create_name('Name')
-        return name.create_variant('Variant', [])
+        return name.create_variant('Variant', [self.tm.create_topic()])
 
     def test_parent (self):
         """Tests the parent/child relationship between name and variant."""
