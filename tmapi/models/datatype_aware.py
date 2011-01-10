@@ -2,6 +2,7 @@ from django.db import models
 
 from tmapi.constants import XSD_ANY_URI, XSD_FLOAT, XSD_INT, XSD_LONG, \
     XSD_STRING
+from tmapi.exceptions import ModelConstraintException
 
 from locator import Locator
 from reifiable import Reifiable
@@ -52,6 +53,8 @@ class DatatypeAware (Reifiable, Scoped):
         :type datatype: `Locator`
 
         """
+        if value is None:
+            raise ModelConstraintException
         if datatype is None:
             # This mapping is not comprehensive, since the mapping
             # (from section 1.10.3 at
