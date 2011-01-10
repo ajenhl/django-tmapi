@@ -3,7 +3,7 @@
 from django.db import models
 
 from tmapi.constants import XSD_ANY_URI, XSD_STRING
-from tmapi.exceptions import ModelConstraintException
+from tmapi.exceptions import ModelConstraintException, TopicInUseException
 
 from construct import Construct
 from construct_fields import ConstructFields
@@ -19,7 +19,7 @@ class Topic (Construct, ConstructFields):
     """Represents a topic item."""
     
     types = models.ManyToManyField('self', symmetrical=False, blank=True,
-                                   related_name='type_instances')
+                                   related_name='typed_topics')
 
     class Meta:
         app_label = 'tmapi'
@@ -184,12 +184,11 @@ class Topic (Construct, ConstructFields):
 
         """
         reified = None
-        reifiable_types = (
-            'reified_association', 'reified_name', 'reified_occurrence',
-            'reified_role', 'reified_topicmap', 'reified_variant')
+        reifiable_types = ('association', 'name', 'occurrence', 'role',
+                           'topicmap', 'variant')
         for reifiable_type in reifiable_types:
             try:
-                reified = getattr(self, reifiable_type)
+                reified = getattr(self, 'reified_' + reifiable_type)
                 break
             except:
                 pass
@@ -238,12 +237,31 @@ class Topic (Construct, ConstructFields):
         
         """
         return self.subject_locators.all()
-        
+
     def get_types (self):
         """Returns a QuerySet containing the types of which this topic
         is an instance."""
         return self.types.all()
 
+    def remove (self):
+        """Removes this topic from the containing `TopicMap` instance.
+
+        This method throws a `TopicInUseException` if the topic plays
+        a `Role`, is used as type of a `Typed` construct, or if it is
+        used as a theme for a `Scoped` construct, or if it reifies a
+        `Reifiable`.
+
+        """
+        if self.role_players.count():
+            raise TopicInUseException
+        if self.get_reified() is not None:
+            raise TopicInUseException
+        if self._has_scoped_constructs():
+            raise TopicInUseException
+        if self._has_typed_constructs():
+            raise TopicInUseException
+        self.delete()
+    
     def remove_subject_identifier (self, subject_identifier):
         """Removes a subject identifer from this topic.
 
@@ -282,3 +300,33 @@ class Topic (Construct, ConstructFields):
 
         """
         self.types.remove(topic_type)
+
+    def _has_scoped_constructs (self):
+        """Returns True if there are constructs scoped by this topic.
+
+        :rtype: Boolean
+
+        """
+        has_scoped_constructs = False
+        scopable_types = ('associations', 'names', 'occurrences', 'variants')
+        for scopable_type in scopable_types:
+            if getattr(self, 'scoped_' + scopable_type).count():
+                has_scoped_constructs = True
+                break
+        return has_scoped_constructs
+
+    def _has_typed_constructs (self):
+        """Returns True if there are constructs typed by this topic.
+
+        :rtype: Boolean
+
+        """
+        has_typed_constructs = False
+        typable_types = ('associations', 'names', 'occurrences', 'roles',
+                         'topics')
+        for typable_type in typable_types:
+            if getattr(self, 'typed_' + typable_type).count():
+                has_typed_constructs = True
+                break
+        return has_typed_constructs
+        
