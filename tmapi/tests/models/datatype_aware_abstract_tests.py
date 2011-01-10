@@ -1,20 +1,25 @@
 from django.test import TestCase
 
-from tmapi.constants import XSD_ANY_URI, XSD_INT, XSD_STRING
+from tmapi.exceptions import ModelConstraintException
 from tmapi.models import TopicMapSystem
 
 
 class DatatypeAwareAbstractTestCase (TestCase):
 
+    _XSD = 'http://www.w3.org/2001/XMLSchema#'
+    _XSD_ANY_URI = _XSD + 'anyURI'
+    _XSD_INT = _XSD + 'int'
+    _XSD_STRING = _XSD + 'string'
+    
     def get_datatype_aware (self):
         raise NotImplementedError
     
     def setUp (self):
         self.tms = TopicMapSystem()
         self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-        self._xsd_any_uri = self.tms.create_locator(XSD_ANY_URI)
-        self._xsd_int = self.tms.create_locator(XSD_INT)
-        self._xsd_string = self.tms.create_locator(XSD_STRING)
+        self._xsd_any_uri = self.tms.create_locator(self._XSD_ANY_URI)
+        self._xsd_int = self.tms.create_locator(self._XSD_INT)
+        self._xsd_string = self.tms.create_locator(self._XSD_STRING)
 
     def test_string (self):
         try:
@@ -70,3 +75,22 @@ class DatatypeAwareAbstractTestCase (TestCase):
         dt.set_value(value, datatype)
         self.assertEqual(datatype, dt.get_datatype())
         self.assertEqual(value, dt.get_value())
+
+    def test_illegal_datatype (self):
+        # This test is not applicable in Python.
+        pass
+
+    def test_illegal_string_value (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        self.assertRaises(ModelConstraintException, dt.set_value, None)
+
+    def test_illegal_string_value_explicit (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        self.assertRaises(ModelConstraintException, dt.set_value, None,
+                          self._xsd_string)
