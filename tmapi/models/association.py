@@ -25,6 +25,10 @@ class Association (ConstructFields, Reifiable, Scoped, Typed):
         """
         if role_type is None or player is None:
             raise ModelConstraintException
+        if self.topic_map != role_type.topic_map:
+            raise ModelConstraintException
+        if self.topic_map != player.topic_map:
+            raise ModelConstraintException
         role = Role(association=self, type=role_type, player=player,
                     topic_map=self.topic_map)
         role.save()
