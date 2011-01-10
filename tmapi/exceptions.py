@@ -10,6 +10,11 @@ class ModelConstraintException (Exception):
     pass
 
 
+class TopicInUseException (Exception):
+
+    pass
+
+
 class TopicMapExistsException (Exception):
 
     pass
