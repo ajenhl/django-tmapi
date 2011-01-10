@@ -71,3 +71,71 @@ class NameTest (TestCase):
         self.assertEqual(dt, variant.get_datatype())
         self.assertEqual(1, variant.get_scope().count())
         self.assertTrue(theme in variant.get_scope())
+
+    def test_variant_creation_illegal_string (self):
+        name = self.tm.create_topic().create_name('Name')
+        theme = self.tm.create_topic()
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          None, [theme])
+
+    def test_variant_creation_illegal_locator (self):
+        # This test is the same as the previous in this Python
+        # implementation.
+        pass
+        
+    def test_variant_creation_illegal_datatype (self):
+        # This test is not applicable in Python.
+        pass
+
+    def test_variant_creation_illegal_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        theme = self.tm.create_topic()
+        name.add_theme(theme)
+        self.assertEqual(1, name.get_scope().count())
+        self.assertTrue(theme in name.get_scope())
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          'Variant', [theme])
+
+    def test_variant_creation_illegal_empty_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          'Variant', [])
+
+    def test_variant_creation_illegal_null_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          'Variant', None)
+
+    def test_variant_creation_illegal_empty_array_scope (self):
+        # This test is not applicable in Python.
+        pass
+
+    def test_variant_creation_with_locator_illegal_empty_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          self.tm.create_locator('http://tmapi.org/'), [])
+
+    def test_variant_creation_with_locator_illegal_null_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          self.tm.create_locator('http://tmapi.org/'), None)
+
+    def test_variant_creation_with_locator_illegal_empty_array_scope (self):
+        # This test is not applicable in Python.
+        pass
+
+    def test_variant_creation_with_datatype_illegal_empty_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        dt = self.tm.create_locator('http://tmapi.org/')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          'Variant', [], dt)
+
+    def test_variant_creation_with_datatype_illegal_null_scope (self):
+        name = self.tm.create_topic().create_name('Name')
+        dt = self.tm.create_locator('http://tmapi.org/')
+        self.assertRaises(ModelConstraintException, name.create_variant,
+                          'Variant', None, dt)
+
+    def test_variant_creation_with_datatype_illegal_empty_array_scope (self):
+        # This test is not applicable in Python.
+        pass
