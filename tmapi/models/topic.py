@@ -9,6 +9,8 @@ from construct import Construct
 from construct_fields import ConstructFields
 from locator import Locator
 from name import Name
+from subject_identifier import SubjectIdentifier
+from subject_locator import SubjectLocator
 from occurrence import Occurrence
 
 
@@ -21,16 +23,20 @@ class Topic (Construct, ConstructFields):
 
     class Meta:
         app_label = 'tmapi'
-    
+
     def add_subject_identifier (self, subject_identifier):
         """Adds a subject identifier to this topic.
 
         :param subject_identifier: the subject identifier to be added
+        :type subject_identifier: `Locator`
         
         """
         if subject_identifier is None:
             raise ModelConstraintException
-        raise Exception('Not yet implemented')
+        si = SubjectIdentifier(topic=self,
+                               address=subject_identifier.to_external_form())
+        si.save()
+        self.subject_identifiers.add(si)
 
     def add_subject_locator (self, subject_locator):
         """Adds a subject locator to this topic.
@@ -40,7 +46,10 @@ class Topic (Construct, ConstructFields):
         """
         if subject_locator is None:
             raise ModelConstraintException
-        raise Exception('Not yet implemented')
+        sl = SubjectLocator(topic=self,
+                            address=subject_locator.to_external_form())
+        sl.save()
+        self.subject_locators.add(sl)
     
     def add_type (self, type):
         """Adds a type to this topic.
@@ -235,6 +244,36 @@ class Topic (Construct, ConstructFields):
         is an instance."""
         return self.types.all()
 
+    def remove_subject_identifier (self, subject_identifier):
+        """Removes a subject identifer from this topic.
+
+        :param subject_identifier: the subject identifier to be remove
+          from this topic
+        :type subject_identifier: `Locator`
+
+        """
+        try:
+            si = SubjectIdentifier.objects.get(
+                topic=self, address=subject_identifier.to_external_form())
+            si.delete()
+        except SubjectIdentifier.DoesNotExist:
+            pass
+
+    def remove_subject_locator (self, subject_locator):
+        """Removes a subject locator from this topic.
+
+        :param subject_locator: the subject locator to be removed from
+          this topic
+        :type subject_locator: `Locator`
+
+        """
+        try:
+            sl = SubjectLocator.objects.get(
+                topic=self, address=subject_locator.to_external_form())
+            sl.delete()
+        except SubjectLocator.DoesNotExist:
+            pass
+    
     def remove_type (self, topic_type):
         """Removes a type from this topic.
 
