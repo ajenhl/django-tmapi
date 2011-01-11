@@ -11,7 +11,11 @@ class TopicMapTest (TestCase):
     def setUp (self):
         self.tms = TopicMapSystem()
         self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
+
+    def test_parent (self):
+        """Tests if TopicMap.get_parent() returns None."""
+        self.assertEqual(None, self.tm.get_parent())
+        
     def test_topic_creation_subject_identifier (self):
         locator = self.tms.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
@@ -129,10 +133,22 @@ class TopicMapTest (TestCase):
         self.assertTrue(theme in association.get_scope())
         self.assertTrue(theme2 in association.get_scope())
 
-    def test_association_creation_illegal_type_scope (self):
+    def test_association_creation_illegal_type (self):
         self.assertRaises(ModelConstraintException,
                           self.tm.create_association, None)
 
+    def test_association_creation_illegal_type_scope (self):
+        self.assertRaises(ModelConstraintException, self.tm.create_association,
+                          None, [self.tm.create_topic()])
+
+    def test_association_creation_illegal_null_collection_scope (self):
+        # This test is not applicable in this implementation.
+        pass
+
+    def test_association_creation_illegal_null_array_scope (self):
+        # This test is not applicable in this implementation.
+        pass
+        
     def test_get_from_topic_creation_subject_identifier (self):
         """Verify that create_topic_by_subject_indicator returns
         existing topic where that topic has an item identifier
