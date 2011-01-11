@@ -1,6 +1,7 @@
 from locator_tests import *
 from association_tests import *
 from construct_tests import *
+from item_identifier_constraint_tests import *
 from name_tests import *
 from occurrence_tests import *
 from reifiable_tests import *
