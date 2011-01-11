@@ -41,8 +41,9 @@ class Reifiable (Construct, models.Model):
         if reifier is None:
             reified = None
         else:
-            if self.get_topic_map() != reifier.get_topic_map():
-                raise ModelConstraintException
+            if self.get_topic_map() != reifier.topic_map:
+                raise ModelConstraintException(
+                    self, 'The reifier is not from the same topic map')
             reified = reifier.get_reified()
         if reified is None:
             self.reifier = reifier
@@ -50,4 +51,5 @@ class Reifiable (Construct, models.Model):
         elif reified == self:
             pass
         else:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The reifier already reifies another construct')

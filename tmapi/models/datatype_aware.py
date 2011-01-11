@@ -54,7 +54,7 @@ class DatatypeAware (Reifiable, Scoped):
 
         """
         if value is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The value may not be None')
         if datatype is None:
             # This mapping is not comprehensive, since the mapping
             # (from section 1.10.3 at

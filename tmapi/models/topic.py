@@ -32,7 +32,8 @@ class Topic (Construct, ConstructFields):
         
         """
         if subject_identifier is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The subject identifier may not be None')
         si = SubjectIdentifier(topic=self,
                                address=subject_identifier.to_external_form())
         si.save()
@@ -45,7 +46,8 @@ class Topic (Construct, ConstructFields):
 
         """
         if subject_locator is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The subject locator may not be None')
         sl = SubjectLocator(topic=self,
                             address=subject_locator.to_external_form())
         sl.save()
@@ -59,9 +61,10 @@ class Topic (Construct, ConstructFields):
         
         """
         if type is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The type may not be None')
         if self.topic_map != type.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The type is not from the same topic map')
         self.types.add(type)
 
     def create_name (self, value, type=None, scope=None):
@@ -85,19 +88,21 @@ class Topic (Construct, ConstructFields):
 
         """
         if value is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The value may not be None')
         if type is None:
             type = self.topic_map.create_topic_by_subject_identifier(
                 Locator('http://psi.topicmaps.org/iso13250/model/topic-name'))
         elif self.topic_map != type.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The type is not from the same topic map')
         name = Name(topic=self, value=value, topic_map=self.topic_map,
                     type=type)
         name.save()
         if scope is not None:
             for theme in scope:
                 if self.topic_map != theme.topic_map:
-                    raise ModelConstraintException
+                    raise ModelConstraintException(
+                        self, 'The theme is not from the same topic map')
                 name.scope.add(theme)
         return name
 
@@ -120,16 +125,17 @@ class Topic (Construct, ConstructFields):
         
         """
         if type is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The type may not be None')
         if value is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The value may not be None')
         if datatype is None:
             if isinstance(value, Locator):
                 datatype = Locator(XSD_ANY_URI)
             else:
                 datatype = Locator(XSD_STRING)
         if self.topic_map != type.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The type is not from the same topic map')
         occurrence = Occurrence(type=type, value=value,
                                 datatype=datatype.to_external_form(),
                                 topic=self, topic_map=self.topic_map)
@@ -137,7 +143,8 @@ class Topic (Construct, ConstructFields):
         if scope is not None:
             for theme in scope:
                 if self.topic_map != theme.topic_map:
-                    raise ModelConstraintException
+                    raise ModelConstraintException(
+                        self, 'The theme is not from the same topic map')
                 occurrence.scope.add(theme)
         return occurrence
     
@@ -253,13 +260,13 @@ class Topic (Construct, ConstructFields):
 
         """
         if self.role_players.count():
-            raise TopicInUseException
+            raise TopicInUseException(self, 'This topic is used as a player')
         if self.get_reified() is not None:
-            raise TopicInUseException
+            raise TopicInUseException(self, 'This topic is used as a reifier')
         if self._has_scoped_constructs():
-            raise TopicInUseException
+            raise TopicInUseException(self, 'This topic is used as a theme')
         if self._has_typed_constructs():
-            raise TopicInUseException
+            raise TopicInUseException(self, 'This topic is used as a type')
         self.delete()
     
     def remove_subject_identifier (self, subject_identifier):

@@ -40,16 +40,18 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         if association_type is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The type may not be None')
         if self != association_type.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The type is not from this topic map')
         association = Association(type=association_type, topic_map=self)
         association.save()
         if scope is None:
             scope = []
         for topic in scope:
             if self != topic.topic_map:
-                raise ModelConstraintException
+                raise ModelConstraintException(
+                    self, 'The theme is not from this topic map')
             association.scope.add(topic)
         return association
         
@@ -105,7 +107,8 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         if item_identifier is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The item identifier may not be None')
         reference = item_identifier.to_external_form()
         try:
             topic = self.topic_constructs.get(
@@ -144,7 +147,8 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         if subject_identifier is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The subject identifier may not be None')
         reference = subject_identifier.to_external_form()
         try:
             topic = self.topic_constructs.get(
@@ -174,7 +178,8 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         if subject_locator is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The subject locator may not be None')
         reference = subject_locator.to_external_form()
         try:
             topic = self.topic_constructs.get(

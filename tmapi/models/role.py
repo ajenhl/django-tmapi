@@ -42,8 +42,9 @@ class Role (ConstructFields, Reifiable, Typed):
 
         """
         if player is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The player may not be None')
         if self.topic_map != player.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The player is not from the same topic map')
         self.player = player
         self.save()

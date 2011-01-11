@@ -48,7 +48,7 @@ class LocatorBase (object):
     def normalise (self, reference):
         parts = list(urlparse.urlsplit(reference))
         if not parts[0]:
-            raise MalformedIRIException
+            raise MalformedIRIException('IRI has no protocol')
         parts[2] = urllib.quote(parts[2], '/;')
         url = unicode(urlparse.urlunsplit(parts), 'utf-8', 'replace')
         if reference.endswith('?'):

@@ -39,11 +39,12 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
 
         """
         if value is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The value may not be None')
         if not scope:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The scope may not be None')
         if scope == list(self.get_scope()):
-            raise ModelConstraintException('The variant would be in the same scope as the parent')
+            raise ModelConstraintException(
+                self, 'The variant would be in the same scope as the parent')
         if datatype is None:
             if isinstance(value, Locator):
                 datatype = Locator(XSD_ANY_URI)
@@ -73,6 +74,6 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
     def set_value (self, value):
         """Sets the value of this name. The previous value is overridden."""
         if value is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The value may not be None')
         self.value = value
         self.save()

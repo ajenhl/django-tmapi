@@ -25,9 +25,10 @@ class Scoped (Construct, models.Model):
 
         """
         if theme is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(self, 'The theme may not be None')
         if self.topic_map != theme.get_topic_map():
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The theme is not from the same topic map')
         self.scope.add(theme)
         
     def get_scope (self):

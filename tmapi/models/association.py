@@ -23,12 +23,16 @@ class Association (ConstructFields, Reifiable, Scoped, Typed):
         :rtype: `Role`
 
         """
-        if role_type is None or player is None:
-            raise ModelConstraintException
+        if role_type is None:
+            raise ModelConstraintException(self, 'The type may not be None')
+        if player is None:
+            raise ModelConstraintException(self, 'The player may not be None')
         if self.topic_map != role_type.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The type is not from the same topic map')
         if self.topic_map != player.topic_map:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The player is not from the same topic map')
         role = Role(association=self, type=role_type, player=player,
                     topic_map=self.topic_map)
         role.save()

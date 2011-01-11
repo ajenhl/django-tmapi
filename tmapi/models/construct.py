@@ -26,7 +26,8 @@ class Construct (object):
         
         """
         if item_identifier is None:
-            raise ModelConstraintException
+            raise ModelConstraintException(
+                self, 'The item identifier may not be None')
         address = item_identifier.to_external_form()
         topic_map = self.get_topic_map()
         try:
