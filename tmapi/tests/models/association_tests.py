@@ -102,6 +102,10 @@ class AssociationTest (TestCase):
         self.assertEqual(0, association.get_roles(type1).count())
         self.assertEqual(0, association.get_roles(unused_type).count())
 
+    def test_role_filter_illegal (self):
+        # This test is not applicable in Python.
+        pass
+        
     def test_role_creation_invalid_player (self):
         tm = self.tms.create_topic_map('http://www.tmapi.org/test/assoc/parent')
         association = tm.create_association(tm.create_topic())
