@@ -8,6 +8,39 @@ class TMAPIException (Exception):
     pass
 
 
+class FactoryConfigurationException (TMAPIException):
+
+    """Exception raised when a `TopicMapSystemFactory` instance cannot
+    be instantiated through the method
+    TopicMapSystemFactory.newInstance().
+
+    Note that this exception is not directly used in this
+    implementation.
+
+    """
+    pass
+
+
+class FeatureNotRecognizedException (FactoryConfigurationException):
+
+    """Exception raised when the TopicMapSystemFactory does not
+    recognize the name of a feature that the application is trying to
+    enable or disable."""
+
+    pass
+
+
+class FeatureNotSupportedException (FactoryConfigurationException):
+
+    """Exception raised when the underlying implementation cannot
+    support enabling or disabling a recognised feature. If the feature
+    name is not recognised, implementations must throw a
+    FeatureNotRecognizedException rather than a
+    FeatureNotSupportedException."""
+
+    pass
+
+
 class TMAPIRuntimeException (Exception):
 
     """Base class for TMAPI runtime exceptions.
@@ -18,8 +51,19 @@ class TMAPIRuntimeException (Exception):
 
     """
 
-    def __init__ (self, message=None):
+    def __init__ (self, message=None, cause=None):
+        """Constructs a new exception with the specified detail
+        message.
+
+        :param message: the optional detail message
+        :type message: string
+        :param cause: the optional exception that caused this
+          exception to be raised
+        :type cause: `Exception`
+
+        """
         self._message = message
+        self._cause = cause
 
     def __unicode__ (self):
         return self._message

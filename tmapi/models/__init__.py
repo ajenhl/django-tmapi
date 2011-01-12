@@ -24,5 +24,6 @@ from subject_locator import SubjectLocator
 from topic import Topic
 from topic_map import TopicMap
 from topic_map_system import TopicMapSystem
+from topic_map_system_factory import TopicMapSystemFactory
 from typed import Typed
 from variant import Variant
