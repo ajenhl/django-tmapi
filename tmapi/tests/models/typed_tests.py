@@ -1,21 +1,16 @@
-"""Module containing tests for Typed models."""
-
-from django.test import TestCase
+"""Module containing tests against the `Typed` interface."""
 
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class TypedTest (TestCase):
+class TypedTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def _test_typed (self, typed):
         old_type = typed.get_type()
         self.assertNotEqual(None, old_type)
-        new_type = self.tm.create_topic()
+        new_type = self.create_topic()
         typed.set_type(new_type)
         self.assertEqual(new_type, typed.get_type(),
                          'Expected another type')
@@ -26,24 +21,16 @@ class TypedTest (TestCase):
 
     def test_association (self):
         """Typed tests against an association."""
-        association = self.tm.create_association(self.tm.create_topic())
-        self._test_typed(association)
+        self._test_typed(self.create_association())
 
     def test_role (self):
         """Typed tests against a role."""
-        association = self.tm.create_association(self.tm.create_topic())
-        role = association.create_role(self.tm.create_topic(),
-                                       self.tm.create_topic())
-        self._test_typed(role)
+        self._test_typed(self.create_role())
 
     def test_occurrence (self):
         """Typed tests against an occurrence."""
-        topic = self.tm.create_topic()
-        occurrence = topic.create_occurrence(self.tm.create_topic(),
-                                             'Occurrence')
-        self._test_typed(occurrence)
+        self._test_typed(self.create_occurrence())
 
     def test_name (self):
         """Typed tests against a name."""
-        name = self.tm.create_topic().create_name('Name')
-        self._test_typed(name)
+        self._test_typed(self.create_name())

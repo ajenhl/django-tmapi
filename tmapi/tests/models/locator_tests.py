@@ -1,19 +1,14 @@
-"""Module containing tests for the Locator module."""
+"""Module containing tests against the `Locator` interface."""
 
-from django.test import TestCase
-
-from tmapi.models import TopicMapSystem
 from tmapi.exceptions import MalformedIRIException
 
+from tmapi_test_case import TMAPITestCase
 
-class LocatorTest (TestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
+class LocatorTest (TMAPITestCase):
+
     def test_normalization (self):
-        locator = self.tms.create_locator('http://www.example.org/test%20me/')
+        locator = self.tm.create_locator('http://www.example.org/test%20me/')
         self.assertEqual('http://www.example.org/test me/',
                          locator.get_reference())
         self.assertEqual('http://www.example.org/test%20me/',
@@ -62,14 +57,14 @@ class LocatorTest (TestCase):
             ('../../g', 'http://a/g'),
             )
         reference = 'http://a/b/c/d;p?q'
-        base = self.tms.create_locator(reference)
+        base = self.tm.create_locator(reference)
         for part, expected in iris:
             self.assertEqual(expected, base.resolve(part).to_external_form())
 
     def test_normalization_preserve_empty (self):
         reference = 'http://www.tmapi.org/x?'
         self.assertEqual(reference,
-                         self.tms.create_locator(reference).to_external_form())
+                         self.tm.create_locator(reference).to_external_form())
         reference = 'http://www.tmapi.org/x#'
         self.assertEqual(reference,
-                         self.tms.create_locator(reference).to_external_form())
+                         self.tm.create_locator(reference).to_external_form())

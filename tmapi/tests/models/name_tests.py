@@ -1,19 +1,15 @@
-from django.test import TestCase
-
 from tmapi.constants import XSD_ANY_URI
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class NameTest (TestCase):
+class NameTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def test_parent (self):
-        parent = self.tm.create_topic()
-        self.assertEqual(0, parent.get_names().count())
+        parent = self.create_topic()
+        self.assertEqual(0, parent.get_names().count(),
+                         'Expected new topics to be created with no names')
         name = parent.create_name('Name')
         self.assertEqual(parent, name.get_parent(),
                          'Unexpected name parent after creation')
@@ -28,8 +24,7 @@ class NameTest (TestCase):
     def test_value (self):
         value1 = 'TMAPI Name'
         value2 = 'A name'
-        topic = self.tm.create_topic()
-        name = topic.create_name('Name')
+        name = self.create_name()
         name.set_value(value1)
         self.assertEqual(value1, name.get_value())
         name.set_value(value2)
@@ -37,10 +32,9 @@ class NameTest (TestCase):
         self.assertRaises(ModelConstraintException, name.set_value, None)
 
     def test_variant_creation_string (self):
-        topic = self.tm.create_topic()
-        name = topic.create_name('Name')
-        theme = self.tm.create_topic()
-        xsd_string = self.tm.create_locator(
+        name = self.create_name()
+        theme = self.create_topic()
+        xsd_string = self.create_locator(
             'http://www.w3.org/2001/XMLSchema#string')
         variant = name.create_variant('Variant', [theme])
         self.assertEqual('Variant', variant.get_value())
@@ -49,11 +43,10 @@ class NameTest (TestCase):
         self.assertTrue(theme in variant.get_scope())
 
     def test_variant_creation_uri (self):
-        topic = self.tm.create_topic()
-        name = topic.create_name('Name')
-        theme = self.tm.create_topic()
-        xsd_any_uri = self.tm.create_locator(XSD_ANY_URI)
-        value = self.tm.create_locator('http://www.example.org/')
+        name = self.create_name()
+        theme = self.create_topic()
+        xsd_any_uri = self.create_locator(XSD_ANY_URI)
+        value = self.create_locator('http://www.example.org/')
         variant = name.create_variant(value, [theme])
         self.assertEqual(value.get_reference(), variant.get_value())
         self.assertEqual(value, variant.locator_value())
@@ -62,10 +55,9 @@ class NameTest (TestCase):
         self.assertTrue(theme in variant.get_scope())
 
     def test_variant_creation_explicit_datatype (self):
-        topic = self.tm.create_topic()
-        name = topic.create_name('Name')
-        theme = self.tm.create_topic()
-        dt = self.tm.create_locator('http://www.example.org/datatype')
+        name = self.create_name()
+        theme = self.create_topic()
+        dt = self.create_locator('http://www.example.org/datatype')
         variant = name.create_variant('Variant', [theme], dt)
         self.assertEqual('Variant', variant.get_value())
         self.assertEqual(dt, variant.get_datatype())
@@ -73,23 +65,23 @@ class NameTest (TestCase):
         self.assertTrue(theme in variant.get_scope())
 
     def test_variant_creation_illegal_string (self):
-        name = self.tm.create_topic().create_name('Name')
-        theme = self.tm.create_topic()
+        name = self.create_name()
+        theme = self.create_topic()
         self.assertRaises(ModelConstraintException, name.create_variant,
                           None, [theme])
 
     def test_variant_creation_illegal_locator (self):
-        # This test is the same as the previous in this Python
+        # This test is the same as the previous in this
         # implementation.
         pass
         
     def test_variant_creation_illegal_datatype (self):
-        # This test is not applicable in Python.
+        # This test is not applicable in this implementation.
         pass
 
     def test_variant_creation_illegal_scope (self):
-        name = self.tm.create_topic().create_name('Name')
-        theme = self.tm.create_topic()
+        name = self.create_name()
+        theme = self.create_topic()
         name.add_theme(theme)
         self.assertEqual(1, name.get_scope().count())
         self.assertTrue(theme in name.get_scope())
@@ -97,45 +89,45 @@ class NameTest (TestCase):
                           'Variant', [theme])
 
     def test_variant_creation_illegal_empty_scope (self):
-        name = self.tm.create_topic().create_name('Name')
+        name = self.create_name()
         self.assertRaises(ModelConstraintException, name.create_variant,
                           'Variant', [])
 
     def test_variant_creation_illegal_null_scope (self):
-        name = self.tm.create_topic().create_name('Name')
+        name = self.create_name()
         self.assertRaises(ModelConstraintException, name.create_variant,
                           'Variant', None)
 
     def test_variant_creation_illegal_empty_array_scope (self):
-        # This test is not applicable in Python.
+        # This test is not applicable in this implementation.
         pass
 
     def test_variant_creation_with_locator_illegal_empty_scope (self):
-        name = self.tm.create_topic().create_name('Name')
+        name = self.create_name()
         self.assertRaises(ModelConstraintException, name.create_variant,
                           self.tm.create_locator('http://tmapi.org/'), [])
 
     def test_variant_creation_with_locator_illegal_null_scope (self):
-        name = self.tm.create_topic().create_name('Name')
+        name = self.create_name()
         self.assertRaises(ModelConstraintException, name.create_variant,
                           self.tm.create_locator('http://tmapi.org/'), None)
 
     def test_variant_creation_with_locator_illegal_empty_array_scope (self):
-        # This test is not applicable in Python.
+        # This test is not applicable in this implementation.
         pass
 
     def test_variant_creation_with_datatype_illegal_empty_scope (self):
-        name = self.tm.create_topic().create_name('Name')
-        dt = self.tm.create_locator('http://tmapi.org/')
+        name = self.create_name()
+        dt = self.create_locator('http://tmapi.org/')
         self.assertRaises(ModelConstraintException, name.create_variant,
                           'Variant', [], dt)
 
     def test_variant_creation_with_datatype_illegal_null_scope (self):
-        name = self.tm.create_topic().create_name('Name')
-        dt = self.tm.create_locator('http://tmapi.org/')
+        name = self.create_name()
+        dt = self.create_locator('http://tmapi.org/')
         self.assertRaises(ModelConstraintException, name.create_variant,
                           'Variant', None, dt)
 
     def test_variant_creation_with_datatype_illegal_empty_array_scope (self):
-        # This test is not applicable in Python.
+        # This test is not applicable in this implementation.
         pass

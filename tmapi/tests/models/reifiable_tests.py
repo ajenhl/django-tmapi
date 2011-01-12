@@ -1,21 +1,22 @@
-"""Module containing tests for Reifiable models."""
-
-from django.test import TestCase
+"""Module containing tests against the `Reifiable` interface."""
 
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class ReifiableTest (TestCase):
+class ReifiableTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def _test_reification (self, reifiable):
+        """Tests setting/getting the reifier for the `reifiable`.
+
+        :param reifiable: the reifiable to run the tests against
+        :type reifiable: `Reifiable`
+
+        """
         self.assertEqual(None, reifiable.get_reifier(),
                          'Unexpected reifier property')
-        reifier = self.tm.create_topic()
+        reifier = self.create_topic()
         self.assertEqual(None, reifier.get_reified())
         reifiable.set_reifier(reifier)
         self.assertEqual(reifier, reifiable.get_reifier(),
@@ -38,20 +39,27 @@ class ReifiableTest (TestCase):
 
     def _test_reification_collision (self, reifiable):
         """Tests if a reifier collision (the reifier is already
-        assigned to another construct) is detected."""
+        assigned to another construct) is detected.
+
+        :param reifiable: the reifiable to run the tests against
+        :type reifiable: `Reifiable`
+
+        """
         self.assertEqual(None, reifiable.get_reifier(),
                          'Unexpected reifier property')
-        reifier = self.tm.create_topic()
+        reifier = self.create_topic()
         self.assertEqual(None, reifier.get_reified())
-        other_reifiable = self.tm.create_topic().create_occurrence(
-            self.tm.create_topic(), 'Occurrence')
+        other_reifiable = self.create_association()
         other_reifiable.set_reifier(reifier)
         self.assertEqual(reifier, other_reifiable.get_reifier(),
                          'Expected a reifier property')
         self.assertEqual(other_reifiable, reifier.get_reified(),
                          'Unexpected reified property')
-        self.assertRaises(ModelConstraintException, reifiable.set_reifier,
-                          reifier)
+        try:
+            reifiable.set_reifier(reifier)
+            self.fail('The reifier already reifies another construct')
+        except ModelConstraintException, ex:
+            self.assertEqual(reifiable, ex.get_reporter())
         other_reifiable.set_reifier(None)
         self.assertEqual(None, other_reifiable.get_reifier(),
                          'Reifier property should be None')
@@ -70,49 +78,31 @@ class ReifiableTest (TestCase):
         self._test_reification_collision(self.tm)
 
     def test_association (self):
-        association = self.tm.create_association(self.tm.create_topic())
-        self._test_reification(association)
+        self._test_reification(self.create_association())
 
     def test_association_reifier_collision (self):
-        association = self.tm.create_association(self.tm.create_topic())
-        self._test_reification_collision(association)
+        self._test_reification_collision(self.create_association())
 
     def test_role (self):
-        association = self.tm.create_association(self.tm.create_topic())
-        role = association.create_role(self.tm.create_topic(),
-                                       self.tm.create_topic())
-        self._test_reification(role)
+        self._test_reification(self.create_role())
 
     def test_role_reifier_collision (self):
-        association = self.tm.create_association(self.tm.create_topic())
-        role = association.create_role(self.tm.create_topic(),
-                                       self.tm.create_topic())
-        self._test_reification_collision(role)
+        self._test_reification_collision(self.create_role())
 
     def test_occurrence (self):
-        occurrence = self.tm.create_topic().create_occurrence(
-            self.tm.create_topic(), 'Occurrence')
-        self._test_reification(occurrence)
+        self._test_reification(self.create_occurrence())
 
     def test_occurrence_reification_collision (self):
-        occurrence = self.tm.create_topic().create_occurrence(
-            self.tm.create_topic(), 'Occurrence')
-        self._test_reification_collision(occurrence)
+        self._test_reification_collision(self.create_occurrence())
 
     def test_name (self):
-        name = self.tm.create_topic().create_name('Name')
-        self._test_reification(name)
+        self._test_reification(self.create_name())
 
     def test_name_reification_collision (self):
-        name = self.tm.create_topic().create_name('Name')
-        self._test_reification_collision(name)
+        self._test_reification_collision(self.create_name())
 
     def test_variant (self):
-        name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [self.tm.create_topic()])
-        self._test_reification(variant)
+        self._test_reification(self.create_variant())
 
     def test_variant_reification_collision (self):
-        name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [self.tm.create_topic()])
-        self._test_reification_collision(variant)
+        self._test_reification_collision(self.create_variant())

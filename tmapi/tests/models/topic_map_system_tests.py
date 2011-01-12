@@ -1,20 +1,13 @@
 """Module containing tests for the TopicMapSystem module."""
 
-from django.test import TestCase
-
 from tmapi.exceptions import TopicMapExistsException
-from tmapi.models.topic_map_system import TopicMapSystem
 
+from tmapi_test_case import TMAPITestCase
 
-class TopicMapSystemTest (TestCase):
-
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.default_reference = 'http://www.example.org/tm/'
-        self.tm = self.tms.create_topic_map(self.default_reference)
+class TopicMapSystemTest (TMAPITestCase):
 
     def test_load (self):
-        tm = self.tms.get_topic_map(self.default_reference)
+        tm = self.tms.get_topic_map(self.default_locator)
         self.assertTrue(tm, 'TopicMap was not created in setUp or was not ' +
                         'retrieved')
         self.assertTrue(tm.get_id(), 'There is no identifier for TopicMap')
@@ -23,22 +16,22 @@ class TopicMapSystemTest (TestCase):
     def test_same_locator (self):
         """Verify two TopicMaps can't be created with the same locator."""
         self.assertRaises(TopicMapExistsException, self.tms.create_topic_map,
-                          self.default_reference)
+                          self.default_locator)
 
     def test_set (self):
         base = 'http://www.tmapi.org/test-tm-system/'
-        tm1 = self.tms.create_topic_map(base + 'test1')
-        tm2 = self.tms.create_topic_map(base + 'test2')
-        tm3 = self.tms.create_topic_map(base + 'test3')
+        tm1 = self.create_topic_map(base + 'test1')
+        tm2 = self.create_topic_map(base + 'test2')
+        tm3 = self.create_topic_map(base + 'test3')
         self.assertTrue(tm1, 'TopicMap 1 was not created')
         self.assertTrue(tm2, 'TopicMap 2 was not created')
         self.assertTrue(tm3, 'TopicMap 3 was not created')
         
     def test_remove_topic_maps (self):
         base = 'http://www.tmapi.org/test-tm-system/'
-        tm1 = self.tms.create_topic_map(base + 'test1')
-        tm2 = self.tms.create_topic_map(base + 'test2')
-        tm3 = self.tms.create_topic_map(base + 'test3')
+        tm1 = self.create_topic_map(base + 'test1')
+        tm2 = self.create_topic_map(base + 'test2')
+        tm3 = self.create_topic_map(base + 'test3')
         self.assertTrue(tm1, 'TopicMap 1 was not created')
         self.assertTrue(tm2, 'TopicMap 2 was not created')
         self.assertTrue(tm3, 'TopicMap 3 was not created')

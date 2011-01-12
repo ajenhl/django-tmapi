@@ -1,31 +1,30 @@
-from django.test import TestCase
+"""Module containing tests against the `Scoped` interface."""
 
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem, Variant
+from tmapi.models import Variant
+
+from tmapi_test_case import TMAPITestCase
 
 
-class ScopedTest (TestCase):
+class ScopedTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def _test_scoped (self, scoped):
         """Tests addding/removing themes.
 
         :param scoped: the scoped Topic Maps construct to test
+        :type scoped: `Scoped`
 
         """
         scope_size = 0
         if isinstance(scoped, Variant):
             scope_size = scoped.get_scope().count()
         self.assertEqual(scope_size, scoped.get_scope().count())
-        theme1 = self.tm.create_topic()
+        theme1 = self.create_topic()
         scoped.add_theme(theme1)
         scope_size += 1
         self.assertEqual(scope_size, scoped.get_scope().count())
         self.assertTrue(theme1 in scoped.get_scope())
-        theme2 = self.tm.create_topic()
+        theme2 = self.create_topic()
         self.assertFalse(theme2 in scoped.get_scope())
         scoped.add_theme(theme2)
         scope_size += 1
@@ -44,22 +43,16 @@ class ScopedTest (TestCase):
 
     def test_association (self):
         """Scoped tests against an association."""
-        association = self.tm.create_association(self.tm.create_topic())
-        self._test_scoped(association)
+        self._test_scoped(self.create_association())
 
     def test_occurrence (self):
         """Scoped tests against an occurrence."""
-        occurrence = self.tm.create_topic().create_occurrence(
-            self.tm.create_topic(), 'Occurrence')
-        self._test_scoped(occurrence)
+        self._test_scoped(self.create_occurrence())
 
     def test_name (self):
         """Scoped tests against a name."""
-        name = self.tm.create_topic().create_name('Name')
-        self._test_scoped(name)
+        self._test_scoped(self.create_name())
 
     def test_variant (self):
         """Scoped tests against a variant."""
-        name = self.tm.create_topic().create_name('Name')
-        variant = name.create_variant('Variant', [self.tm.create_topic()])
-        self._test_scoped(variant)
+        self._test_scoped(self.create_variant())

@@ -1,10 +1,11 @@
-from django.test import TestCase
+"""Module containing abstract test against the `DatatypeAware` interface."""
 
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class DatatypeAwareAbstractTestCase (TestCase):
+class DatatypeAwareAbstractTestCase (TMAPITestCase):
 
     _XSD = 'http://www.w3.org/2001/XMLSchema#'
     _XSD_ANY_URI = _XSD + 'anyURI'
@@ -15,7 +16,7 @@ class DatatypeAwareAbstractTestCase (TestCase):
         raise NotImplementedError
     
     def setUp (self):
-        self.tms = TopicMapSystem()
+        super(DatatypeAwareAbstractTestCase, self).setUp()
         self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
         self._xsd_any_uri = self.tms.create_locator(self._XSD_ANY_URI)
         self._xsd_int = self.tms.create_locator(self._XSD_INT)

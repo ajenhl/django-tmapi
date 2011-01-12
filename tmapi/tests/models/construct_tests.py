@@ -1,18 +1,24 @@
-from django.test import TestCase
+"""Module containing tests against the `Construct` interface."""
 
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMap, TopicMapSystem
+from tmapi.models import TopicMap
+
+from tmapi_test_case import TMAPITestCase
 
 
-class ConstructTest (TestCase):
+class ConstructTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def _test_construct (self, construct):
+        """Tests adding/removing item identifiers, retrieval by item
+        identifier, and retrieval by the system specific id.
+
+        :param construct: the Topic Maps construct to test
+        :type construct: `Construct`
+
+        """
         tm = self.tm
-        self.assertEqual(0, construct.get_item_identifiers().count())
+        self.assertEqual(0, construct.get_item_identifiers().count(),
+                         'Unexpected item identifiers')
         iid = tm.create_locator('http://www.tmapi.org/test#test')
         construct.add_item_identifier(iid)
         self.assertEqual(1, construct.get_item_identifiers().count(),

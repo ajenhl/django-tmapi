@@ -1,3 +1,5 @@
+"""Module containing tests against the `Occurrence` interface."""
+
 from datatype_aware_abstract_tests import DatatypeAwareAbstractTestCase
 
 
@@ -8,7 +10,7 @@ class OccurrenceTest (DatatypeAwareAbstractTestCase):
             self.tm.create_topic(), 'Occurrence')
 
     def test_parent (self):
-        parent = self.tm.create_topic()
+        parent = self.create_topic()
         self.assertEqual(0, parent.get_occurrences().count(),
                          'Expected new topic to be created with no occurrences')
         occurrence = parent.create_occurrence(self.tm.create_topic(),

@@ -1,20 +1,15 @@
 """Module containing tests for the Topic model."""
 
-from django.test import TestCase
-
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class TopicTest (TestCase):
+class TopicTest (TMAPITestCase):
 
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
-    
     def test_parent (self):
-        parent = self.tms.create_topic_map(
-            'http://www.tmapi.org/test/topic/parent')
+        """Tests the parent/child relationship between topic map and topic."""
+        parent = self.create_topic_map('http://www.tmapi.org/test/topic/parent')
         self.assertEqual(0, parent.get_topics().count(),
                          'Expected new topic map to be created with no topics')
         topic = parent.create_topic()
@@ -29,12 +24,12 @@ class TopicTest (TestCase):
                          'Expected topic list size to decrement for topic map')
 
     def test_add_subject_identifier_illegal (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException,
                           topic.add_subject_identifier, None)
 
     def test_add_subject_locator_illegal (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.add_subject_locator,
                           None)
 
@@ -52,8 +47,8 @@ class TopicTest (TestCase):
         self.assertTrue(locator2 in topic.get_subject_identifiers())
 
     def test_subject_locators (self):
-        locator1 = self.tm.create_locator('http://www.example.org/1')
-        locator2 = self.tm.create_locator('http://www.example.org/2')
+        locator1 = self.create_locator('http://www.example.org/1')
+        locator2 = self.create_locator('http://www.example.org/2')
         topic = self.tm.create_topic_by_subject_locator(locator1)
         self.assertEqual(1, topic.get_subject_locators().count())
         self.assertTrue(locator1 in topic.get_subject_locators())
@@ -65,9 +60,9 @@ class TopicTest (TestCase):
         self.assertTrue(locator2 in topic.get_subject_locators())
 
     def test_topic_types (self):
-        topic = self.tm.create_topic()
-        type1 = self.tm.create_topic()
-        type2 = self.tm.create_topic()
+        topic = self.create_topic()
+        type1 = self.create_topic()
+        type2 = self.create_topic()
         self.assertEqual(0, topic.get_types().count())
         topic.add_type(type1)
         self.assertEqual(1, topic.get_types().count())
@@ -82,15 +77,15 @@ class TopicTest (TestCase):
         self.assertEqual(0, topic.get_types().count())
 
     def test_add_type_illegal (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.add_type, None)
 
     def test_role_filter (self):
         player = self.tm.create_topic()
-        type1 = self.tm.create_topic()
-        type2 = self.tm.create_topic()
-        unused_type = self.tm.create_topic()
-        association = self.tm.create_association(self.tm.create_topic())
+        type1 = self.create_topic()
+        type2 = self.create_topic()
+        unused_type = self.create_topic()
+        association = self.create_association()
         self.assertEqual(0, player.get_roles_played(type1).count())
         self.assertEqual(0, player.get_roles_played(type2).count())
         self.assertEqual(0, player.get_roles_played(unused_type).count())
@@ -114,11 +109,11 @@ class TopicTest (TestCase):
         pass
 
     def test_role_association_filter (self):
-        player = self.tm.create_topic()
-        association_type1 = self.tm.create_topic()
-        association_type2 = self.tm.create_topic()
-        role_type1 = self.tm.create_topic()
-        role_type2 = self.tm.create_topic()
+        player = self.create_topic()
+        association_type1 = self.create_topic()
+        association_type2 = self.create_topic()
+        role_type1 = self.create_topic()
+        role_type2 = self.create_topic()
         association = self.tm.create_association(association_type1)
         self.assertEqual(0, player.get_roles_played(role_type1,
                                                     association_type1).count())
@@ -187,16 +182,18 @@ class TopicTest (TestCase):
                                                     association_type2).count())
 
     def test_role_association_filter_illegal_association (self):
+        # This test is not applicable to this implementation.
         pass
 
     def test_role_association_filter_illegal_role (self):
+        # This test is not applicable to this implementation.
         pass
 
     def test_occurrence_filter (self):
-        topic = self.tm.create_topic()
-        type1 = self.tm.create_topic()
-        type2 = self.tm.create_topic()
-        unused_type = self.tm.create_topic()
+        topic = self.create_topic()
+        type1 = self.create_topic()
+        type2 = self.create_topic()
+        unused_type = self.create_topic()
         self.assertEqual(0, topic.get_occurrences(type1).count())
         self.assertEqual(0, topic.get_occurrences(type2).count())
         self.assertEqual(0, topic.get_occurrences(unused_type).count())
@@ -216,13 +213,14 @@ class TopicTest (TestCase):
         self.assertEqual(0, topic.get_occurrences(unused_type).count())
 
     def test_occurrence_filter_illegal (self):
+        # This test is not applicable to this implementation.
         pass
 
     def test_name_filter (self):
-        topic = self.tm.create_topic()
-        type1 = self.tm.create_topic()
-        type2 = self.tm.create_topic()
-        unused_type = self.tm.create_topic()
+        topic = self.create_topic()
+        type1 = self.create_topic()
+        type2 = self.create_topic()
+        unused_type = self.create_topic()
         self.assertEqual(0, topic.get_names(type1).count())
         self.assertEqual(0, topic.get_names(type2).count())
         self.assertEqual(0, topic.get_names(unused_type).count())
@@ -242,13 +240,14 @@ class TopicTest (TestCase):
         self.assertEqual(0, topic.get_names(unused_type).count())
 
     def test_name_filter_illegal (self):
+        # This test is not applicable to this implementation.
         pass
 
     def test_occurrence_creation_type_string (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
         value = 'Occurrence'
-        dt = self.tm.create_locator('http://www.w3.org/2001/XMLSchema#string')
+        dt = self.create_locator('http://www.w3.org/2001/XMLSchema#string')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value)
         self.assertEqual(1, topic.get_occurrences().count())
@@ -260,10 +259,10 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_uri (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        value = self.tm.create_locator('http://www.example.org/')
-        dt = self.tm.create_locator('http://www.w3.org/2001/XMLSchema#anyURI')
+        topic = self.create_topic()
+        type = self.create_topic()
+        value = self.create_locator('http://www.example.org/')
+        dt = self.create_locator('http://www.w3.org/2001/XMLSchema#anyURI')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value)
         self.assertEqual(1, topic.get_occurrences().count())
@@ -275,10 +274,10 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_explicit_datatype (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
         value = 'Occurrence'
-        dt = self.tm.create_locator('http://www.example.org/datatype')
+        dt = self.create_locator('http://www.example.org/datatype')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value, datatype=dt)
         self.assertEqual(1, topic.get_occurrences().count())
@@ -290,12 +289,12 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_scope_string (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        theme1 = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
+        theme1 = self.create_topic()
+        theme2 = self.create_topic()
         value = 'Occurrence'
-        dt = self.tm.create_locator('http://www.w3.org/2001/XMLSchema#string')
+        dt = self.create_locator('http://www.w3.org/2001/XMLSchema#string')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value, [theme1, theme2])
         self.assertEqual(1, topic.get_occurrences().count())
@@ -309,12 +308,12 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_scope_uri (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        theme1 = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
-        value = self.tm.create_locator('http://www.example.org/')
-        dt = self.tm.create_locator('http://www.w3.org/2001/XMLSchema#anyURI')
+        topic = self.create_topic()
+        type = self.create_topic()
+        theme1 = self.create_topic()
+        theme2 = self.create_topic()
+        value = self.create_locator('http://www.example.org/')
+        dt = self.create_locator('http://www.w3.org/2001/XMLSchema#anyURI')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value, [theme1, theme2])
         self.assertEqual(1, topic.get_occurrences().count())
@@ -328,12 +327,12 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_scope_explicit_datatype (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        theme1 = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
+        theme1 = self.create_topic()
+        theme2 = self.create_topic()
         value = 'Occurrence'
-        dt = self.tm.create_locator('http://www.example.org/datatype')
+        dt = self.create_locator('http://www.example.org/datatype')
         self.assertEqual(0, topic.get_occurrences().count())
         occurrence = topic.create_occurrence(type, value, [theme1, theme2], dt)
         self.assertEqual(1, topic.get_occurrences().count())
@@ -347,33 +346,33 @@ class TopicTest (TestCase):
         self.assertEqual(0, occurrence.get_item_identifiers().count())
 
     def test_occurrence_creation_type_illegal_string (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_occurrence,
-                          self.tm.create_topic(), None)
+                          self.create_topic(), None)
 
     def test_occurrence_creation_type_illegal_uri (self):
         # Note that this is identical to the previous test, given
         # Python's lack of typing.
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_occurrence,
-                          self.tm.create_topic(), None)
+                          self.create_topic(), None)
 
     def test_occurrence_creation_type_illegal_datatype (self):
-        # This test seems inapplicable in Python.
+        # This test is not applicable to this implementation.
         pass
 
     def test_occurrence_creation_illegal_type (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_occurrence,
                           None, 'Occurrence')
 
     def test_occurrence_creation_type_illegal_scope (self):
-        # This test seems inapplicable in Python.
+        # This test is not applicable to this implementation.
         pass
 
     def test_name_creation_type (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
         value = 'Name'
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value, type)
@@ -385,9 +384,9 @@ class TopicTest (TestCase):
         self.assertEqual(0, name.get_item_identifiers().count())
 
     def test_name_creation_type_scope_single (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        theme = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
+        theme = self.create_topic()
         value = 'Name'
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value, type, [theme])
@@ -400,10 +399,10 @@ class TopicTest (TestCase):
         self.assertEqual(0, name.get_item_identifiers().count())
 
     def test_name_creation_type_scope_multiple (self):
-        topic = self.tm.create_topic()
-        type = self.tm.create_topic()
-        theme1 = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
+        topic = self.create_topic()
+        type = self.create_topic()
+        theme1 = self.create_topic()
+        theme2 = self.create_topic()
         value = 'Name'
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value, type, [theme1, theme2])
@@ -417,9 +416,9 @@ class TopicTest (TestCase):
         self.assertEqual(0, name.get_item_identifiers().count())
 
     def test_name_creation_default_type (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         value = 'Name'
-        locator = self.tm.create_locator(
+        locator = self.create_locator(
             'http://psi.topicmaps.org/iso13250/model/topic-name')
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value)
@@ -433,10 +432,10 @@ class TopicTest (TestCase):
         self.assertTrue(locator in type.get_subject_identifiers())
 
     def test_name_creation_default_type_scope_single (self):
-        topic = self.tm.create_topic()
-        theme = self.tm.create_topic()
+        topic = self.create_topic()
+        theme = self.create_topic()
         value = 'Name'
-        locator = self.tm.create_locator(
+        locator = self.create_locator(
             'http://psi.topicmaps.org/iso13250/model/topic-name')
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value, scope=[theme])
@@ -451,11 +450,11 @@ class TopicTest (TestCase):
         self.assertTrue(locator in type.get_subject_identifiers())
 
     def test_name_creation_default_type_scope_multiple (self):
-        topic = self.tm.create_topic()
-        theme1 = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
+        topic = self.create_topic()
+        theme1 = self.create_topic()
+        theme2 = self.create_topic()
         value = 'Name'
-        locator = self.tm.create_locator(
+        locator = self.create_locator(
             'http://psi.topicmaps.org/iso13250/model/topic-name')
         self.assertEqual(0, topic.get_names().count())
         name = topic.create_name(value, scope=[theme1, theme2])
@@ -471,20 +470,22 @@ class TopicTest (TestCase):
         self.assertTrue(locator in type.get_subject_identifiers())
 
     def test_name_creation_type_illegal_string (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_name,
-                          None, self.tm.create_topic())
+                          None, self.create_topic())
 
     def test_name_creation_type_illegal_scope (self):
-        # This test seems inapplicable in Python.
+        # This test is not applicable to this implementation.
         pass
 
     def test_name_creation_default_type_illegal_string (self):
-        topic = self.tm.create_topic()
+        topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_name, None)
                           
-    def test_name_creation_default_type_illegal_scope (self):
-        # This test seems inapplicable in Python.
+    def test_name_creation_default_type_illegal_scope_array (self):
+        # This test is not applicable to this implementation.
         pass
 
-    
+    def test_name_creation_default_type_illegal_scope_collection (self):
+        # This test is not applicable to this implementation.
+        pass

@@ -1,7 +1,7 @@
 """Tests if the TMDM item identifier constraint is respect."""
 
 from tmapi.exceptions import IdentityConstraintException
-from tmapi.models import TopicMap, TopicMapSystem
+from tmapi.models import TopicMap
 
 from tmapi_test_case import TMAPITestCase
 

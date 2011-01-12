@@ -1,23 +1,18 @@
 """Module containing tests for the TopicMap model."""
 
-from django.test import TestCase
-
 from tmapi.exceptions import ModelConstraintException
-from tmapi.models import TopicMapSystem
+
+from tmapi_test_case import TMAPITestCase
 
 
-class TopicMapTest (TestCase):
-
-    def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
+class TopicMapTest (TMAPITestCase):
 
     def test_parent (self):
         """Tests if TopicMap.get_parent() returns None."""
         self.assertEqual(None, self.tm.get_parent())
         
     def test_topic_creation_subject_identifier (self):
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
         topic = self.tm.create_topic_by_subject_identifier(locator)
         self.assertEqual(1, self.tm.get_topics().count())
@@ -33,7 +28,7 @@ class TopicMapTest (TestCase):
                           self.tm.create_topic_by_subject_identifier, None)
 
     def test_topic_creation_subject_locator (self):
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
         topic = self.tm.create_topic_by_subject_locator(locator)
         self.assertEqual(1, self.tm.get_topics().count())
@@ -49,7 +44,7 @@ class TopicMapTest (TestCase):
                           self.tm.create_topic_by_subject_locator, None)
         
     def test_topic_creation_item_identifier (self):
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
         topic = self.tm.create_topic_by_item_identifier(locator)
         self.assertEqual(1, self.tm.get_topics().count())
@@ -74,7 +69,7 @@ class TopicMapTest (TestCase):
         self.assertEqual(0, topic.get_subject_locators().count())
 
     def test_topic_by_subject_identifier (self):
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         t = self.tm.get_topic_by_subject_identifier(locator)
         self.assertEqual(None, t)
         topic = self.tm.create_topic_by_subject_identifier(locator)
@@ -86,7 +81,7 @@ class TopicMapTest (TestCase):
         self.assertEqual(None, t)
 
     def test_topic_by_subject_locator (self):
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         t = self.tm.get_topic_by_subject_locator(locator)
         self.assertEqual(None, t)
         topic = self.tm.create_topic_by_subject_locator(locator)
@@ -98,7 +93,7 @@ class TopicMapTest (TestCase):
         self.assertEqual(None, t)
 
     def test_association_creation_type (self):
-        type_topic = self.tm.create_topic()
+        type_topic = self.create_topic()
         self.assertEqual(0, self.tm.get_associations().count())
         association = self.tm.create_association(type_topic)
         self.assertEqual(1, self.tm.get_associations().count())
@@ -108,8 +103,8 @@ class TopicMapTest (TestCase):
         self.assertEqual(0, association.get_scope().count())
 
     def test_association_creation_type_scope_single (self):
-        type_topic = self.tm.create_topic()
-        theme = self.tm.create_topic()
+        type_topic = self.create_topic()
+        theme = self.create_topic()
         self.assertEqual(0, self.tm.get_associations().count())
         association = self.tm.create_association(type_topic, (theme,))
         self.assertEqual(1, self.tm.get_associations().count())
@@ -120,9 +115,9 @@ class TopicMapTest (TestCase):
         self.assertTrue(theme in association.get_scope())
 
     def test_association_creation_type_scope_multiple (self):
-        type_topic = self.tm.create_topic()
-        theme = self.tm.create_topic()
-        theme2 = self.tm.create_topic()
+        type_topic = self.create_topic()
+        theme = self.create_topic()
+        theme2 = self.create_topic()
         self.assertEqual(0, self.tm.get_associations().count())
         association = self.tm.create_association(type_topic, (theme, theme2))
         self.assertEqual(1, self.tm.get_associations().count())
@@ -153,7 +148,7 @@ class TopicMapTest (TestCase):
         """Verify that create_topic_by_subject_indicator returns
         existing topic where that topic has an item identifier
         matching the subject identifier."""
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
         topic = self.tm.create_topic_by_item_identifier(locator)
         self.assertEqual(1, self.tm.get_topics().count())
@@ -172,7 +167,7 @@ class TopicMapTest (TestCase):
         """Verify that create_topic_by_item_identifier returns
         existing topic where that topic has a subject identifier
         matching the item identifier."""
-        locator = self.tms.create_locator('http://www.example.org/')
+        locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
         topic = self.tm.create_topic_by_subject_identifier(locator)
         self.assertEqual(1, self.tm.get_topics().count())

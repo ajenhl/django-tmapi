@@ -1,18 +1,19 @@
+"""Module containing tests for the `Variant` model."""
+
 from datatype_aware_abstract_tests import DatatypeAwareAbstractTestCase
 
 
 class VariantTest (DatatypeAwareAbstractTestCase):
 
     def get_datatype_aware (self):
-        name = self.tm.create_topic().create_name('Name')
-        return name.create_variant('Variant', [self.tm.create_topic()])
+        return self.create_variant()
 
     def test_parent (self):
         """Tests the parent/child relationship between name and variant."""
-        parent = self.tm.create_topic().create_name('Name')
+        parent = self.create_name()
         self.assertEqual(0, parent.get_variants().count(),
                          'Expected new name to be created with no variants')
-        variant = parent.create_variant('Variant', [self.tm.create_topic()])
+        variant = parent.create_variant('Variant', [self.create_topic()])
         self.assertEqual(parent, variant.get_parent(),
                          'Unexpected variant parent after creation')
         self.assertEqual(1, parent.get_variants().count(),
@@ -25,9 +26,9 @@ class VariantTest (DatatypeAwareAbstractTestCase):
 
     def test_scope_property (self):
         """Tests if the variant's scope contains the name's scope."""
-        name = self.tm.create_topic().create_name('Name')
+        name = self.create_name()
         self.assertEqual(0, name.get_scope().count())
-        variant_theme = self.tm.create_topic()
+        variant_theme = self.create_topic()
         variant = name.create_variant('Variant', [variant_theme])
         self.assertNotEqual(None, variant)
         self.assertEqual(1, variant.get_scope().count(),
@@ -49,9 +50,9 @@ class VariantTest (DatatypeAwareAbstractTestCase):
     def test_scope_property_2 (self):
         """Tests if a variant's theme equal to a name's theme stays
         even if the name's theme is removed."""
-        theme = self.tm.create_topic()
-        variant_theme = self.tm.create_topic()
-        name = self.tm.create_topic().create_name('Name', scope=[theme])
+        theme = self.create_topic()
+        variant_theme = self.create_topic()
+        name = self.create_topic().create_name('Name', scope=[theme])
         self.assertEqual(1, name.get_scope().count())
         self.assertTrue(theme in name.get_scope())
         variant = name.create_variant('Variant', [theme, variant_theme])
@@ -71,9 +72,9 @@ class VariantTest (DatatypeAwareAbstractTestCase):
     def test_scope_property_3 (self):
         """Tests if a variant's theme equal to a name's theme stays
         even if the variant's theme is removed."""
-        theme = self.tm.create_topic()
-        variant_theme = self.tm.create_topic()
-        name = self.tm.create_topic().create_name('Name', scope=[theme])
+        theme = self.create_topic()
+        variant_theme = self.create_topic()
+        name = self.create_topic().create_name('Name', scope=[theme])
         self.assertEqual(1, name.get_scope().count())
         self.assertTrue(theme in name.get_scope())
         variant = name.create_variant('Variant', [theme, variant_theme])
