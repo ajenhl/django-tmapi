@@ -1,4 +1,5 @@
-from tmapi.exceptions import ModelConstraintException
+from tmapi.exceptions import IdentityConstraintException, \
+    ModelConstraintException
 
 from item_identifier import ItemIdentifier
 
@@ -31,13 +32,18 @@ class Construct (object):
         address = item_identifier.to_external_form()
         topic_map = self.get_topic_map()
         try:
-            existing = ItemIdentifier.objects.get(
-                address=address, containing_topic_map=topic_map)
+            ii = ItemIdentifier.objects.get(address=address,
+                                            containing_topic_map=topic_map)
+            construct = ii.get_construct()
+            if construct is not None:
+                raise IdentityConstraintException(
+                    self, construct, item_identifier,
+                    'This item identifier is already associated with another construct')
         except ItemIdentifier.DoesNotExist:
             ii = ItemIdentifier(address=address,
                                 containing_topic_map=topic_map)
             ii.save()
-            self.item_identifiers.add(ii)
+        self.item_identifiers.add(ii)
 
     def get_id (self):
         """Returns the identifier of this construct.
