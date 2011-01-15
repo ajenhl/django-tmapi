@@ -9,9 +9,10 @@ from reifiable_tests import *
 from role_tests import *
 from same_topic_map_tests import *
 from scoped_tests import *
-#from topic_map_merge_tests import *
+from topic_map_merge_tests import *
 from topic_map_system_tests import *
 from topic_map_tests import *
+from topic_merge_detection_tests import *
 from topic_removable_constraint_tests import *
 from topic_tests import *
 from typed_tests import *
