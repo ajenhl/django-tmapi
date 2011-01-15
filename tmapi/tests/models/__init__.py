@@ -6,6 +6,7 @@ from locator_tests import *
 from name_tests import *
 from occurrence_tests import *
 from reifiable_tests import *
+from rfc3986_tests import *
 from role_tests import *
 from same_topic_map_tests import *
 from scoped_tests import *
