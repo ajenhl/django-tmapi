@@ -12,12 +12,7 @@ class FactoryConfigurationException (TMAPIException):
 
     """Exception raised when a `TopicMapSystemFactory` instance cannot
     be instantiated through the method
-    TopicMapSystemFactory.newInstance().
-
-    Note that this exception is not directly used in this
-    implementation.
-
-    """
+    TopicMapSystemFactory.newInstance()."""
     pass
 
 
