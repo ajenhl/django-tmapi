@@ -11,6 +11,7 @@ class TMAPITestCase (TestCase):
     
     def setUp (self):
         self.tms = TopicMapSystem()
+        self.tms.save()
         self.default_locator = self.tms.create_locator(self.DEFAULT_ADDRESS)
         self.tm = self.tms.create_topic_map(self.default_locator)
 

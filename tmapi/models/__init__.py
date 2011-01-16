@@ -21,6 +21,7 @@ from role import Role
 from scoped import Scoped
 from subject_identifier import SubjectIdentifier
 from subject_locator import SubjectLocator
+from tmapi_feature import TMAPIFeature
 from topic import Topic
 from topic_map import TopicMap
 from topic_map_system import TopicMapSystem

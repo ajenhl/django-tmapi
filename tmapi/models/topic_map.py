@@ -17,11 +17,8 @@ class TopicMap (BaseConstructFields, Reifiable):
 
     """Represents a topic map item."""
 
-    # identifier duplicates that defined in consutrct_fields.py.
-    #identifier = models.OneToOneField('Identifier', related_name='topic_map')
-    # item_identifiers duplicates that defined in construct_fields.py.
-    #item_identifiers = models.ManyToManyField('ItemIdentifier',
-    #                                          related_name='topic_map')
+    topic_map_system = models.ForeignKey('TopicMapSystem',
+                                         related_name='topic_maps')
     iri = models.CharField(max_length=512)
     title = models.CharField(max_length=128, blank=True)
     base_address = models.CharField(max_length=512, blank=True)
@@ -308,6 +305,29 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         return self
+
+    def merge_in (self, other):
+        """Merges the topic map `other` into this topic map.
+
+        All `Topic`s and `Association`s and all of their contents in
+        `other` will be added to this topic map.
+
+        All information items in `other` will be merged into this
+        topic map as defined by the Topic Maps - Data Model (TMDM)
+        merging rules.
+
+        The merge process will not modify `other` in any way.
+
+        If this topic map equals `other`, no changes are made to the
+        topic map.
+
+        :param other: the topic map to be merged with this topic map
+          instance
+        :type other: `TopicMap`
+
+        """
+        if self == other:
+            return
 
     def remove (self):
         self.delete()

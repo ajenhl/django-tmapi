@@ -2,6 +2,7 @@ from tmapi.constants import AUTOMERGE_FEATURE_STRING
 from tmapi.exceptions import FeatureNotRecognizedException, \
     FeatureNotSupportedException
 
+from tmapi_feature import TMAPIFeature
 from topic_map_system import TopicMapSystem
 
 
@@ -20,7 +21,7 @@ class TopicMapSystemFactory (object):
     # Dictionary of recognised feature strings, specifying their state
     # (enabled/disabled) and whether they are supported.
     _features = {
-        AUTOMERGE_FEATURE_STRING: (True, True),
+        AUTOMERGE_FEATURE_STRING: [True, True],
         }
     _properties = {}
     
@@ -100,7 +101,14 @@ class TopicMapSystemFactory (object):
         :rtype: `TopicMapSystem`
 
         """
-        return TopicMapSystem(self._features, self._properties)
+        tms = TopicMapSystem()
+        tms.save()
+        for feature_string, values in self._features.items():
+            feature = TMAPIFeature(feature_string=feature_string,
+                                   topic_map_system=tms, value=values[0])
+            feature.save()
+            tms.features.add(feature)
+        return tms
 
     def set_feature (self, feature_name, enable):
         """Sets a particular feature in the underlying implementation
@@ -117,7 +125,7 @@ class TopicMapSystemFactory (object):
         """
         if feature_name in self._features:
             if self._features[feature_name][1]:
-                self._features[feature_name] = enable
+                self._features[feature_name][0] = enable
             else:
                 raise FeatureNotSupportedException
         else:

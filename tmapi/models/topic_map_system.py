@@ -1,19 +1,18 @@
+from django.db import models
+
 from tmapi.exceptions import TopicMapExistsException, \
     FeatureNotRecognizedException
 from locator import Locator
+from tmapi_feature import TMAPIFeature
 from topic_map import TopicMap
 
 
-class TopicMapSystem (object):
+class TopicMapSystem (models.Model):
 
     """A generic interface to this TMAPI system."""
 
-    _features = {}
-    _properties = {}
-
-    def __init__ (self, features=None, properties=None):
-        self._features = features or {}
-        self._properties = properties or {}
+    class Meta:
+        app_label = 'tmapi'
 
     def create_locator (self, reference):
         """Returns a `Locator` instance representing the specified IRI
@@ -42,7 +41,7 @@ class TopicMapSystem (object):
         if self.get_topic_map(iri) is not None:
             raise TopicMapExistsException()
         reference = iri.to_external_form()
-        tm = TopicMap(iri=reference)
+        tm = TopicMap(topic_map_system=self, iri=reference)
         tm.save()
         return tm
 
@@ -60,10 +59,11 @@ class TopicMapSystem (object):
         :rtype: Boolean
 
         """
-        feature = self._features.get(feature_name)
-        if feature is None:
+        try:
+            feature = self.features.get(feature_string=feature_name)
+        except TMAPIFeature.DoesNotExist:
             raise FeatureNotRecognizedException
-        return feature
+        return feature.value
 
     def get_locators (self):
         """Returns all storage addresses of `TopicMap` instances known
@@ -94,7 +94,10 @@ class TopicMapSystem (object):
         :rtype: object value set for the property or None if no value is set
 
         """
-        return self._properties.get(property_name)
+        # There are no core TMAPI properties, and this implementation
+        # supports no others, so there is no need even for a store of
+        # such.
+        return None
     
     def get_topic_map (self, iri):
         """Retrieves a `TopicMap` managed by this system with the
