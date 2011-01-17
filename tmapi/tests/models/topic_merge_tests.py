@@ -197,7 +197,7 @@ class TopicMergeTest (TMAPITestCase):
         topic2 = self.tm.create_topic()
         name1 = topic1.create_name('TMAPI')
         name2 = topic2.create_name('TMAPI')
-        variant = name2.create_variant('tiny', self.create_topic())
+        variant = name2.create_variant('tiny', [self.create_topic()])
         self.assertEqual(1, topic1.get_names().count())
         self.assertTrue(name1 in topic1.get_names())
         self.assertEqual(0, name1.get_variants().count())
