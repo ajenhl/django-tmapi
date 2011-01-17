@@ -250,6 +250,50 @@ class Topic (Construct, ConstructFields):
         is an instance."""
         return self.types.all()
 
+    def merge_in (self, other):
+        """Merges another topic into this topic.
+
+        Merging a topic into this topic causes this topic to gain all
+        of the characteristics of the other topic and to replace the
+        other topic wherever it is used as type, theme, or
+        reifier. After this method completes, `other` will have been
+        removed from the `TopicMap`.
+
+        If `self` equals `other` no changes are made to the topic.
+
+        NOTE: The other topic must belong to the same `TopicMap`
+        instance as this topic.
+
+        :param other: the topic to be merged into this topic
+        :type other: `Topic`
+
+        """
+        if other is None:
+            raise ModelConstraintException(
+                self, 'The topic to merge in may not be None')
+        if other == self:
+            return
+        if self.topic_map != other.topic_map:
+            raise ModelConstraintException(
+                self, 'The topic to merge in is not from the same topic map')
+        if self.get_reified() is not None and other.get_reified() is not None:
+            raise ModelConstraintException(
+                self, 'Both topics are being used as reifiers')
+        for topic_type in other.get_types():
+            self.add_type(topic_type)
+        for role in other.get_roles_played():
+            role.set_player(self)
+        for subject_identifier in other.get_subject_identifiers():
+            subject_identifier.topic = self
+            subject_identifier.save()
+        for subject_locator in other.get_subject_locators():
+            subject_locator.topic = self
+            subject_locator.save()
+        for item_identifier in other.get_item_identifiers():
+            other.item_identifiers.remove(item_identifier)
+            self.item_identifiers.add(item_identifier)
+        other.remove()
+
     def remove (self):
         """Removes this topic from the containing `TopicMap` instance.
 
