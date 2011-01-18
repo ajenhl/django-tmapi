@@ -157,7 +157,8 @@ class TopicMap (BaseConstructFields, Reifiable):
             except Topic.DoesNotExist:
                 topic = Topic(topic_map=self)
                 topic.save()
-            si = SubjectIdentifier(topic=topic, address=reference)
+            si = SubjectIdentifier(topic=topic, address=reference,
+                                   containing_topic_map=self)
             si.save()
             topic.subject_identifiers.add(si)
         return topic
@@ -184,7 +185,8 @@ class TopicMap (BaseConstructFields, Reifiable):
         except Topic.DoesNotExist:
             topic = Topic(topic_map=self)
             topic.save()
-            sl = SubjectLocator(topic=topic, address=reference)
+            sl = SubjectLocator(topic=topic, address=reference,
+                                containing_topic_map=self)
             sl.save()
             topic.subject_locators.add(sl)
         return topic

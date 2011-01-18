@@ -2,8 +2,9 @@
 
 from django.db import models
 
-from tmapi.constants import XSD_ANY_URI, XSD_STRING
-from tmapi.exceptions import ModelConstraintException, TopicInUseException
+from tmapi.constants import AUTOMERGE_FEATURE_STRING, XSD_ANY_URI, XSD_STRING
+from tmapi.exceptions import IdentityConstraintException, \
+    ModelConstraintException, TopicInUseException
 
 from construct import Construct
 from construct_fields import ConstructFields
@@ -27,6 +28,11 @@ class Topic (Construct, ConstructFields):
     def add_subject_identifier (self, subject_identifier):
         """Adds a subject identifier to this topic.
 
+        If adding the specified subject identifier would make this
+        topic represent the same subject as another topic and the
+        feature "automerge" (http://tmapi.org/features/automerge/) is
+        disabled, an `IdentityConstraintException` is thrown.
+
         :param subject_identifier: the subject identifier to be added
         :type subject_identifier: `Locator`
         
@@ -34,10 +40,22 @@ class Topic (Construct, ConstructFields):
         if subject_identifier is None:
             raise ModelConstraintException(
                 self, 'The subject identifier may not be None')
-        si = SubjectIdentifier(topic=self,
-                               address=subject_identifier.to_external_form())
-        si.save()
-        self.subject_identifiers.add(si)
+        address = subject_identifier.to_external_form()
+        try:
+            topic = self.topic_map.topic_constructs.get(
+                subject_identifiers__address=address)
+            if topic == self:
+                return
+            elif self.topic_map.topic_map_system.get_feature(
+                AUTOMERGE_FEATURE_STRING):
+                pass
+            else:
+                raise IdentityConstraintException
+        except Topic.DoesNotExist:
+            si = SubjectIdentifier(topic=self, address=address,
+                                   containing_topic_map=self.topic_map)
+            si.save()
+            self.subject_identifiers.add(si)
 
     def add_subject_locator (self, subject_locator):
         """Adds a subject locator to this topic.
@@ -48,8 +66,9 @@ class Topic (Construct, ConstructFields):
         if subject_locator is None:
             raise ModelConstraintException(
                 self, 'The subject locator may not be None')
-        sl = SubjectLocator(topic=self,
-                            address=subject_locator.to_external_form())
+        address = subject_locator.to_external_form()
+        sl = SubjectLocator(topic=self, address=address,
+                            containing_topic_map=self.topic_map)
         sl.save()
         self.subject_locators.add(sl)
     
@@ -155,6 +174,8 @@ class Topic (Construct, ConstructFields):
         type are returned.
 
         :param name_type: the type of the `Name`s to be returned
+        :type name_type: `Topic`
+        :rtype: `QuerySet` of `Name`s
         
         """
         if name_type is None:
@@ -169,6 +190,8 @@ class Topic (Construct, ConstructFields):
         this topic where the occurrence type is `occurrence_type`.
 
         :param occurrence_type: the type of the `Occurrence`s to be returned
+        :type occurrence_type: `Topic`
+        :rtype: `QuerySet` of `Occurrence`s
 
         """
         if occurrence_type is None:
@@ -247,7 +270,11 @@ class Topic (Construct, ConstructFields):
 
     def get_types (self):
         """Returns a QuerySet containing the types of which this topic
-        is an instance."""
+        is an instance.
+
+        :rtype: `QuerySet` of `Topic`s
+
+        """
         return self.types.all()
 
     def merge_in (self, other):

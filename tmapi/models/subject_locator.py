@@ -7,6 +7,8 @@ class SubjectLocator (LocatorBase, models.Model):
 
     topic = models.ForeignKey('Topic', related_name='subject_locators')
     address = models.CharField(max_length=512)
+    containing_topic_map = models.ForeignKey(
+        'TopicMap', related_name='subject_locators_in_map')
 
     class Meta:
         app_label = 'tmapi'
