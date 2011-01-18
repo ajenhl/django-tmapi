@@ -75,7 +75,7 @@ class TopicMapSystemFactory (object):
         return has_feature
 
     @staticmethod
-    def new_instance (self):
+    def new_instance ():
         """Obtain a new instance of a TopicMapSystemFactory.
 
         This static method creates a new factory instance. In this
