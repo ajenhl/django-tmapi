@@ -1,7 +1,7 @@
 """Tests if merging situations are detected."""
 
 from tmapi.exceptions import IdentityConstraintException
-from tmapi.models import TopicMapSystem
+from tmapi.models import TopicMapSystemFactory
 
 from tmapi_test_case import TMAPITestCase
 
@@ -13,7 +13,11 @@ class TopicMergeDetectionTestCase (TMAPITestCase):
     
     def setUp (self):
         self.automerge = self.get_automerge_enabled()
-        self.tms = TopicMapSystem()
+        factory = TopicMapSystemFactory.new_instance()
+        if self.automerge is not None:
+            factory.set_feature('http://tmapi.org/features/automerge',
+                                self.automerge)
+        self.tms = factory.new_topic_map_system()
         self.tms.save()
         self.default_locator = self.tms.create_locator(self.DEFAULT_ADDRESS)
         self.tm = self.tms.create_topic_map(self.default_locator)

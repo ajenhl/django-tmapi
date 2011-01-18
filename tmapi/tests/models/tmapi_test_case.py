@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from tmapi.models import TopicMapSystem
+from tmapi.models import TopicMapSystemFactory
 
 
 class TMAPITestCase (TestCase):
@@ -10,8 +10,8 @@ class TMAPITestCase (TestCase):
     DEFAULT_ADDRESS = 'http://www.tmapi.org/tmapi2.0'
     
     def setUp (self):
-        self.tms = TopicMapSystem()
-        self.tms.save()
+        factory = TopicMapSystemFactory.new_instance()
+        self.tms = factory.new_topic_map_system()
         self.default_locator = self.tms.create_locator(self.DEFAULT_ADDRESS)
         self.tm = self.tms.create_topic_map(self.default_locator)
 
