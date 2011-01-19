@@ -42,35 +42,75 @@ class Topic (Construct, ConstructFields):
                 self, 'The subject identifier may not be None')
         address = subject_identifier.to_external_form()
         try:
+            # Check if there is an existing topic with the same
+            # subject identifier or item identifier.
             topic = self.topic_map.topic_constructs.get(
-                subject_identifiers__address=address)
+                models.Q(subject_identifiers__address=address) |
+                models.Q(item_identifiers__address=address))
             if topic == self:
-                return
+                # If the match was because this topic has an item
+                # identifier equal to subject_identifier, add the
+                # subject identifier. Otherwise do nothing.
+                if not SubjectIdentifier.objects.filter(topic=self,
+                                                        address=address):
+                    self._add_subject_identifier(address)
             elif self.topic_map.topic_map_system.get_feature(
                 AUTOMERGE_FEATURE_STRING):
-                pass
+                self.merge_in(topic)
             else:
-                raise IdentityConstraintException
+                raise IdentityConstraintException(
+                    self, topic, subject_identifier, 'Another topic has the same subject/item identifier and automerge is disabled')
         except Topic.DoesNotExist:
-            si = SubjectIdentifier(topic=self, address=address,
-                                   containing_topic_map=self.topic_map)
-            si.save()
-            self.subject_identifiers.add(si)
+            self._add_subject_identifier(address)
 
+    def _add_subject_identifier (self, address):
+        """Adds a subject identifier to this topic.
+
+        This method performs only the actual database operation to add
+        the subject identifier, and is only called after appropriate
+        checking in add_subject_identifier().
+
+        :param address: external form of a locator
+        :type address: string
+        
+        """
+        si = SubjectIdentifier(topic=self, address=address,
+                               containing_topic_map=self.topic_map)
+        si.save()
+        self.subject_identifiers.add(si)
+            
     def add_subject_locator (self, subject_locator):
         """Adds a subject locator to this topic.
 
+        If adding the specified subject locator would make this topic
+        represent teh same subject as another topic and the feature
+        'automerge' (http://tmapi.org/features/automerge/) is
+        disabled, an `IdentityConstraintException` is thrown.
+
         :param subject_locator: the subject locator to be added
+        :type subject_locator: `Locator`
 
         """
         if subject_locator is None:
             raise ModelConstraintException(
                 self, 'The subject locator may not be None')
         address = subject_locator.to_external_form()
-        sl = SubjectLocator(topic=self, address=address,
-                            containing_topic_map=self.topic_map)
-        sl.save()
-        self.subject_locators.add(sl)
+        try:
+            topic = self.topic_map.topic_constructs.get(
+                subject_locators__address=address)
+            if topic == self:
+                return
+            elif self.topic_map.topic_map_system.get_feature(
+                AUTOMERGE_FEATURE_STRING):
+                self.merge_in(topic)
+            else:
+                raise IdentityConstraintException(
+                    self, topic, subject_locator, 'Another topic has the same subject locator and automerge is disabled')
+        except Topic.DoesNotExist:
+            sl = SubjectLocator(topic=self, address=address,
+                                containing_topic_map=self.topic_map)
+            sl.save()
+            self.subject_locators.add(sl)
     
     def add_type (self, type):
         """Adds a type to this topic.
