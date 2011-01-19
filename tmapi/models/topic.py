@@ -8,6 +8,7 @@ from tmapi.exceptions import IdentityConstraintException, \
 
 from construct import Construct
 from construct_fields import ConstructFields
+from item_identifier import ItemIdentifier
 from locator import Locator
 from name import Name
 from subject_identifier import SubjectIdentifier
@@ -25,6 +26,70 @@ class Topic (Construct, ConstructFields):
     class Meta:
         app_label = 'tmapi'
 
+    def add_item_identifier (self, item_identifier):
+        """Adds an item identifier to this topic.
+
+        If adding the specified item identifier would make this topic
+        represent the same subject as another topic and the feature
+        "automerge" (http://tmapi.org/features/automerge/) is
+        disabled, an `IdentityConstraintException` is thrown.
+
+        :param item_identifier: the item identifier to be added
+        :type item_identifier: `Locator`
+
+        """
+        if item_identifier is None:
+            raise ModelConstraintException(
+                self, 'The item identifier may not be None')
+        address = item_identifier.to_external_form()
+        try:
+            ii = ItemIdentifier.objects.get(address=address,
+                                            containing_topic_map=self.topic_map)
+            construct = ii.get_construct()
+            if construct == self:
+                return
+            if not isinstance(construct, Topic):
+                raise IdentityConstraintException(
+                    self, construct, item_identifier, 'This item identifier is already associated with another non-Topic construct')
+            if self.topic_map.topic_map_system.get_feature(
+                AUTOMERGE_FEATURE_STRING):
+                self.merge_in(construct)
+            else:
+                raise IdentityConstraintException(
+                    self, construct, item_identifier, 'Another topic has the same item identifier and automerge is disabled')
+        except ItemIdentifier.DoesNotExist:
+            try:
+                # Check that there is no topic with a subject
+                # indicator whose address matches item_identifier's.
+                topic = self.topic_map.topic_constructs.get(
+                    subject_identifiers__address=address)
+                if topic == self:
+                    self._add_item_identifier(address)
+                elif self.topic_map.topic_map_system.get_feature(
+                    AUTOMERGE_FEATURE_STRING):
+                    self.merge_in(topic)
+                else:
+                    raise IdentityConstraintException(
+                        self, topic, item_identifier, 'Another topic has the same subject identifier and automerge is disabled')
+            except Topic.DoesNotExist:
+                self._add_item_identifier(address)
+
+    def _add_item_identifier (self, address):
+        """Adds an item identifier to this topic.
+
+        This method performs only the actual database operation to add
+        the item identifier, and is only called after appropriate
+        checking in add_item_identifier().
+
+        :param address: external form of a locator
+        :type address: string
+        
+        """
+        ii = ItemIdentifier(address=address,
+                            containing_topic_map=self.topic_map)
+        ii.save()
+        self.item_identifiers.add(ii)
+        
     def add_subject_identifier (self, subject_identifier):
         """Adds a subject identifier to this topic.
 
@@ -378,7 +443,7 @@ class Topic (Construct, ConstructFields):
             raise TopicInUseException(self, 'This topic is used as a theme')
         if self._has_typed_constructs():
             raise TopicInUseException(self, 'This topic is used as a type')
-        self.delete()
+        super(Topic, self).remove()
     
     def remove_subject_identifier (self, subject_identifier):
         """Removes a subject identifer from this topic.

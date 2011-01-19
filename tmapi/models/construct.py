@@ -35,15 +35,23 @@ class Construct (object):
             ii = ItemIdentifier.objects.get(address=address,
                                             containing_topic_map=topic_map)
             construct = ii.get_construct()
-            if construct is not None:
-                raise IdentityConstraintException(
-                    self, construct, item_identifier,
-                    'This item identifier is already associated with another construct')
+            if construct == self:
+                return
+            # While an ItemIdentifier may legitimately (in the
+            # database's terms) exist while not being associated with
+            # any constructs, the only valid ways to remove an item
+            # identifier from a construct (remove_item_identifier()
+            # and remove()) delete the item identifier. Therefore,
+            # raise an exception without checking that construct is
+            # not None.
+            raise IdentityConstraintException(
+                self, ii.get_construct(), item_identifier,
+                'This item identifier is already associated with another construct')
         except ItemIdentifier.DoesNotExist:
             ii = ItemIdentifier(address=address,
                                 containing_topic_map=topic_map)
             ii.save()
-        self.item_identifiers.add(ii)
+            self.item_identifiers.add(ii)
 
     def get_id (self):
         """Returns the identifier of this construct.
@@ -93,6 +101,9 @@ class Construct (object):
         undefined state and must not be used further.
 
         """
+        # item identifiers are joined to a construct in a many to many
+        # relationship, so they need to be explicitly deleted.
+        self.get_item_identifiers().delete()
         self.delete()
     
     def remove_item_identifier (self, item_identifier):
