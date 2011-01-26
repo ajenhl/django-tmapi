@@ -271,7 +271,7 @@ class Topic (Construct, ConstructFields):
                         self, 'The theme is not from the same topic map')
                 occurrence.scope.add(theme)
         return occurrence
-    
+
     def get_names (self, name_type=None):
         """Returns a QuerySet of the names of this topic.
 
@@ -424,6 +424,8 @@ class Topic (Construct, ConstructFields):
         for item_identifier in other.get_item_identifiers():
             other.item_identifiers.remove(item_identifier)
             self.item_identifiers.add(item_identifier)
+        for other_occurrence in other.get_occurrences():
+            other_occurrence.merge_into(self)
         other.remove()
 
     def remove (self):
