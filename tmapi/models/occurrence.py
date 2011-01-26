@@ -30,11 +30,11 @@ class Occurrence (ConstructFields, DatatypeAware, Typed):
         """
         merged = False
         datatype = self.get_datatype()
-        type = self.get_type()
+        occurrence_type = self.get_type()
         scope = set(self.get_scope())
         value = self.get_value()
         reifier = self.get_reifier()
-        for occurrence in topic.get_occurrences(type):
+        for occurrence in topic.get_occurrences(occurrence_type):
             # If the value, datatype, type and scope of the two
             # occurrences match, then merge them.
             if value == occurrence.get_value() and \
@@ -47,7 +47,7 @@ class Occurrence (ConstructFields, DatatypeAware, Typed):
                     occurrence.set_reifier(reifier)
                 elif reifier is not None and other_reifier is not None:
                     self.set_reifier(None)
-                    other_reifier.merge_in(other_reifier)
+                    other_reifier.merge_in(reifier)
                 # Handle item identifiers.
                 for iid in self.get_item_identifiers():
                     self.item_identifiers.remove(iid)
