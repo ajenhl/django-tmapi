@@ -1,4 +1,4 @@
-from tmapi.constants import AUTOMERGE_FEATURE_STRING
+from tmapi.constants import AUTOMERGE_FEATURE_STRING, READ_ONLY_FEATURE_STRING
 from tmapi.exceptions import FeatureNotRecognizedException, \
     FeatureNotSupportedException
 
@@ -22,6 +22,7 @@ class TopicMapSystemFactory (object):
     # (enabled/disabled) and whether they are supported.
     _features = {
         AUTOMERGE_FEATURE_STRING: [True, True],
+        READ_ONLY_FEATURE_STRING: [False, False],
         }
     _properties = {}
     
@@ -126,6 +127,11 @@ class TopicMapSystemFactory (object):
         if feature_name in self._features:
             if self._features[feature_name][1]:
                 self._features[feature_name][0] = enable
+            elif self._features[feature_name][0] == enable:
+                # Do nothing if trying to set the feature to its
+                # current value, even if it is not permitted to change
+                # the value.
+                pass
             else:
                 raise FeatureNotSupportedException
         else:
