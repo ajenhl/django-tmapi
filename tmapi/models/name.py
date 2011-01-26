@@ -70,7 +70,45 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
     def get_variants (self):
         """Returns the variants defined for this name."""
         return self.variants.all()
-    
+
+    def merge_into (self, topic):
+        """Attaches this name to `topic`, merging it as
+        appropriate with an existing name.
+
+        :param topic: the `Topic` this name is to be attached to
+        :type topic: `Topic`
+
+        """
+        merged = False
+        value = self.get_value()
+        name_type = self.get_type()
+        scope = set(self.get_scope())
+        reifier = self.get_reifier()
+        variants = self.get_variants()
+        for name in topic.get_names(name_type):
+            if value == name.get_value() and scope == set(name.get_scope()):
+                # Handle reifiers.
+                other_reifier = name.get_reifier()
+                if reifier is not None and other_reifier is None:
+                    self.set_reifier(None)
+                    name.set_reifier(reifier)
+                elif reifier is not None and other_reifier is not None:
+                    self.set_reifier(None)
+                    other_reifier.merge_in(reifier)
+                # Handle item identifiers.
+                for iid in self.get_item_identifiers():
+                    self.item_identifiers.remove(iid)
+                    name.item_identifiers.add(iid)
+                # Handle variants.
+                for variant in variants:
+                    variant.merge_into(name)
+                self.remove()
+                merged = True
+                break
+        if not merged:
+            self.topic = topic
+            self.save()
+                
     def set_value (self, value):
         """Sets the value of this name. The previous value is overridden."""
         if value is None:

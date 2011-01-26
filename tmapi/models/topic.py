@@ -424,6 +424,8 @@ class Topic (Construct, ConstructFields):
         for item_identifier in other.get_item_identifiers():
             other.item_identifiers.remove(item_identifier)
             self.item_identifiers.add(item_identifier)
+        for other_name in other.get_names():
+            other_name.merge_into(self)
         for other_occurrence in other.get_occurrences():
             other_occurrence.merge_into(self)
         other.remove()
