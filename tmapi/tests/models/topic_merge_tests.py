@@ -107,9 +107,9 @@ class TopicMergeTest (TMAPITestCase):
         topic1 = self.tm.create_topic()
         topic2 = self.tm.create_topic()
         reifier = self.tm.create_topic()
-        type = self.tm.create_topic()
-        name1 = topic1.create_name('TMAPI', type)
-        name2 = topic2.create_name('TMAPI', type)
+        name_type = self.tm.create_topic()
+        name1 = topic1.create_name('TMAPI', name_type)
+        name2 = topic2.create_name('TMAPI', name_type)
         self.assertEqual(4, self.tm.get_topics().count())
         name1.set_reifier(reifier)
         self.assertEqual(reifier, name1.get_reifier())
@@ -123,16 +123,16 @@ class TopicMergeTest (TMAPITestCase):
         name = topic1.get_names()[0]
         self.assertEqual(reifier, name.get_reifier())
 
-    def test_duplicate_detection_reifier_merge (self):
-        """Tests if merging detects duplicates and merges the reifiers
+    def test_duplicate_name_detection_reifier_merge (self):
+        """Tests if merging detects duplicate names and merges the reifiers
         of the duplicates."""
         topic1 = self.tm.create_topic()
         topic2 = self.tm.create_topic()
         reifier1 = self.tm.create_topic()
         reifier2 = self.tm.create_topic()
-        type = self.tm.create_topic()
-        name1 = topic1.create_name('TMAPI', type)
-        name2 = topic2.create_name('TMAPI', type)
+        name_type = self.tm.create_topic()
+        name1 = topic1.create_name('TMAPI', name_type)
+        name2 = topic2.create_name('TMAPI', name_type)
         self.assertEqual(5, self.tm.get_topics().count())
         name1.set_reifier(reifier1)
         name2.set_reifier(reifier2)
@@ -148,7 +148,7 @@ class TopicMergeTest (TMAPITestCase):
         name = topic1.get_names()[0]
         reifier = None
         for topic in self.tm.get_topics():
-            if topic != topic1 and topic != type:
+            if topic != topic1 and topic != name_type:
                 reifier = topic
                 break
         self.assertEqual(reifier, name.get_reifier())
@@ -278,3 +278,33 @@ class TopicMergeTest (TMAPITestCase):
         self.assertTrue(iid1 in occ.get_item_identifiers())
         self.assertTrue(iid2 in occ.get_item_identifiers())
         self.assertEqual('TMAPI', occ.get_value())
+
+    def test_duplicate_occurrence_detection_reifier_merge (self):
+        """Tests if merging detects duplicate occurrences and merges
+        the reifiers of the duplicates."""
+        topic1 = self.tm.create_topic()
+        topic2 = self.tm.create_topic()
+        reifier1 = self.tm.create_topic()
+        reifier2 = self.tm.create_topic()
+        occ_type = self.tm.create_topic()
+        occ1 = topic1.create_occurrence(occ_type, 'TMAPI')
+        occ2 = topic2.create_occurrence(occ_type, 'TMAPI')
+        self.assertEqual(5, self.tm.get_topics().count())
+        occ1.set_reifier(reifier1)
+        occ2.set_reifier(reifier2)
+        self.assertEqual(reifier1, occ1.get_reifier())
+        self.assertEqual(reifier2, occ2.get_reifier())
+        self.assertEqual(1, topic1.get_occurrences().count())
+        self.assertTrue(occ1 in topic1.get_occurrences())
+        self.assertEqual(1, topic2.get_occurrences().count())
+        self.assertTrue(occ2 in topic2.get_occurrences())
+        topic1.merge_in(topic2)
+        self.assertEqual(3, self.tm.get_topics().count())
+        self.assertEqual(1, topic1.get_occurrences().count())
+        occ = topic1.get_occurrences()[0]
+        reifier = None
+        for topic in self.tm.get_topics():
+            if topic != topic1 and topic != occ_type:
+                reifier = topic
+                break
+        self.assertEqual(reifier, occ.get_reifier())
