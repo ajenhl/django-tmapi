@@ -1,4 +1,7 @@
-from tmapi.constants import AUTOMERGE_FEATURE_STRING, READ_ONLY_FEATURE_STRING
+from tmapi.constants import AUTOMERGE_FEATURE_STRING, \
+    MERGE_BY_TOPIC_NAME_FEATURE_STRING, READ_ONLY_FEATURE_STRING, \
+    TYPE_INSTANCE_ASSOCIATIONS_FEATURE_STRING
+
 from tmapi.exceptions import FeatureNotRecognizedException, \
     FeatureNotSupportedException
 
@@ -22,7 +25,9 @@ class TopicMapSystemFactory (object):
     # (enabled/disabled) and whether they are supported.
     _features = {
         AUTOMERGE_FEATURE_STRING: [True, True],
+        MERGE_BY_TOPIC_NAME_FEATURE_STRING: [False, False],
         READ_ONLY_FEATURE_STRING: [False, False],
+        TYPE_INSTANCE_ASSOCIATIONS_FEATURE_STRING: [False, False],
         }
     _properties = {}
     
@@ -108,7 +113,6 @@ class TopicMapSystemFactory (object):
             feature = TMAPIFeature(feature_string=feature_string,
                                    topic_map_system=tms, value=values[0])
             feature.save()
-            tms.features.add(feature)
         return tms
 
     def set_feature (self, feature_name, enable):
