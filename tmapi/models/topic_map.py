@@ -1,3 +1,4 @@
+from django.contrib.sites.models import Site
 from django.db import models
 
 from tmapi.exceptions import ModelConstraintException
@@ -79,8 +80,12 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         topic = Topic(topic_map=self)
-        # QAZ: add automatically generated item identifier.
         topic.save()
+        address = 'http://%s/tmapi/iid/auto/%d' % \
+            (Site.objects.get_current().domain, topic.id)
+        ii = ItemIdentifier(address=address, containing_topic_map=self)
+        ii.save()
+        topic.item_identifiers.add(ii)
         return topic
 
     def create_topic_by_item_identifier (self, item_identifier):
