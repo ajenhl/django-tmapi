@@ -338,3 +338,7 @@ class TopicMap (BaseConstructFields, Reifiable):
 
     def remove (self):
         self.delete()
+
+    def __unicode__ (self):
+        name = self.title or 'Topic map'
+        return u'%s (%s)' % (name, self.iri)
