@@ -3,7 +3,6 @@ from django.db import models
 
 class Identifier (models.Model):
 
-    #identifier = models.CharField(max_length=24)
     # containing_topic_map may be null because when a TopicMap object
     # is first created (before it is saved) it has no database ID.
     containing_topic_map = models.ForeignKey(
@@ -28,4 +27,5 @@ class Identifier (models.Model):
                 pass
         return construct
 
-        
+    def __unicode__ (self):
+        return unicode(self.id)
