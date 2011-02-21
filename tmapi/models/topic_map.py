@@ -12,6 +12,7 @@ from reifiable import Reifiable
 from subject_identifier import SubjectIdentifier
 from subject_locator import SubjectLocator
 from topic import Topic
+from copy_utils import copy
 
 
 class TopicMap (BaseConstructFields, Reifiable):
@@ -52,7 +53,17 @@ class TopicMap (BaseConstructFields, Reifiable):
                     self, 'The theme is not from this topic map')
             association.scope.add(topic)
         return association
-        
+
+    def create_empty_topic (self):
+        """Returns a `Topic` instance with no other information.
+
+        :rtype: `Topic`
+
+        """
+        topic = Topic(topic_map=self)
+        topic.save()
+        return topic
+    
     def create_locator (self, reference):
         """Returns a `Locator` instance representing the specified IRI
         reference.
@@ -70,7 +81,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         """Returns a `Topic` instance with an automatically generated
         item identifier.
 
-        This method returns never an existing `Topic` but creates a
+        This method never returns an existing `Topic` but creates a
         new one with an automatically generated item identifier.
 
         Returns the newly created `Topic` instance with an automatically
@@ -333,8 +344,10 @@ class TopicMap (BaseConstructFields, Reifiable):
         :type other: `TopicMap`
 
         """
-        if self == other:
-            return
+        if other is None:
+            raise ModelConstraintException(
+                self, 'The topic map to merge in may not be None')
+        copy(other, self)
 
     def remove (self):
         self.delete()

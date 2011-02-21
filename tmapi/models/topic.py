@@ -14,10 +14,10 @@ from name import Name
 from subject_identifier import SubjectIdentifier
 from subject_locator import SubjectLocator
 from occurrence import Occurrence
-
-from tmapi.models.merge_utils import generate_association_signature, \
-    generate_name_signature, generate_occurrence_signature, \
-    handle_existing_construct, move_role_characteristics, move_variants
+from merge_utils import handle_existing_construct, \
+    move_role_characteristics, move_variants
+from signature import generate_association_signature, \
+    generate_name_signature, generate_occurrence_signature
 
 
 class Topic (Construct, ConstructFields):
