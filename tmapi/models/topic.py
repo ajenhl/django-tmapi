@@ -15,6 +15,10 @@ from subject_identifier import SubjectIdentifier
 from subject_locator import SubjectLocator
 from occurrence import Occurrence
 
+from tmapi.models.merge_utils import generate_association_signature, \
+    generate_name_signature, generate_occurrence_signature, \
+    handle_existing_construct, move_role_characteristics, move_variants
+
 
 class Topic (Construct, ConstructFields):
 
@@ -272,6 +276,10 @@ class Topic (Construct, ConstructFields):
                 occurrence.scope.add(theme)
         return occurrence
 
+    @models.permalink
+    def get_absolute_url (self):
+        return ('tmapi_topic_display', (), {'topic_id': self.id})
+
     def get_names (self, name_type=None):
         """Returns a QuerySet of the names of this topic.
 
@@ -408,13 +416,14 @@ class Topic (Construct, ConstructFields):
         if self.topic_map != other.topic_map:
             raise ModelConstraintException(
                 self, 'The topic to merge in is not from the same topic map')
-        if self.get_reified() is not None and other.get_reified() is not None:
+        other_reified = other.get_reified()
+        if self.get_reified() is not None and other_reified is not None:
             raise ModelConstraintException(
                 self, 'Both topics are being used as reifiers')
+        if other_reified is not None:
+            other_reified.set_reifier(self)
         for topic_type in other.get_types():
             self.add_type(topic_type)
-        for role in other.get_roles_played():
-            role.set_player(self)
         for subject_identifier in other.get_subject_identifiers():
             subject_identifier.topic = self
             subject_identifier.save()
@@ -424,10 +433,47 @@ class Topic (Construct, ConstructFields):
         for item_identifier in other.get_item_identifiers():
             other.item_identifiers.remove(item_identifier)
             self.item_identifiers.add(item_identifier)
-        for other_name in other.get_names():
-            other_name.merge_into(self)
-        for other_occurrence in other.get_occurrences():
-            other_occurrence.merge_into(self)
+        signatures = {}
+        for name in self.get_names():
+            signature = generate_name_signature(name)
+            signatures[signature] = name
+        for name in other.get_names():
+            signature = generate_name_signature(name)
+            existing = signatures.get(signature)
+            if existing is not None:
+                handle_existing_construct(name, existing)
+                move_variants(name, existing)
+                name.remove()
+            else:
+                name.topic = self
+                name.save()
+        signatures = {}
+        for occurrence in self.get_occurrences():
+            signature = generate_occurrence_signature(occurrence)
+            signatures[signature] = occurrence
+        for occurrence in other.get_occurrences():
+            signature = generate_occurrence_signature(occurrence)
+            existing = signatures.get(signature)
+            if existing is not None:
+                handle_existing_construct(occurrence, existing)
+                occurrence.remove()
+            else:
+                occurrence.topic = self
+                occurrence.save()
+        signatures = {}
+        for role in self.get_roles_played():
+            parent = role.get_parent()
+            signature = generate_association_signature(parent)
+            signatures[signature] = parent
+        for role in other.get_roles_played():
+            role.set_player(self)
+            parent = role.get_parent()
+            signature = generate_association_signature(parent)
+            existing = signatures.get(signature)
+            if existing is not None:
+                handle_existing_construct(parent, existing)
+                move_role_characteristics(parent, existing)
+                parent.remove()
         other.remove()
 
     def remove (self):
