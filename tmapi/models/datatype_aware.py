@@ -60,7 +60,7 @@ class DatatypeAware (Reifiable, Scoped):
             # (from section 1.10.3 at
             # http://cvs.zope.org/~checkout~/Packages/WebService/doc/WebService.html)
             # has the same Python type mapped to multiple XSD types.
-            if isinstance(value, str):
+            if isinstance(value, str) or isinstance(value, unicode):
                 datatype = XSD_STRING
             elif isinstance(value, Locator):
                 datatype = XSD_ANY_URI
