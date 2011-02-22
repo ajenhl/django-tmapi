@@ -4,8 +4,6 @@ from construct_fields import ConstructFields
 from datatype_aware import DatatypeAware
 from typed import Typed
 
-from tmapi.models.merge_utils import handle_existing_construct
-
 
 class Occurrence (ConstructFields, DatatypeAware, Typed):
 
