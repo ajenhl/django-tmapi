@@ -42,6 +42,8 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
             raise ModelConstraintException(self, 'The value may not be None')
         if not scope:
             raise ModelConstraintException(self, 'The scope may not be None')
+        if type(scope) not in (type([]), type(())):
+            scope = [scope]
         if scope == list(self.get_scope()):
             raise ModelConstraintException(
                 self, 'The variant would be in the same scope as the parent')

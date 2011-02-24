@@ -195,11 +195,11 @@ class Topic (Construct, ConstructFields):
                 self, 'The type is not from the same topic map')
         self.types.add(type)
 
-    def create_name (self, value, type=None, scope=None):
+    def create_name (self, value, name_type=None, scope=None):
         """Creates a `Name` for this topic with the specified `value`,
         `type` and `scope`.
 
-        If `type` is None, the created `Name` will have the default
+        If `name_type` is None, the created `Name` will have the default
         name type (a `Topic` with the subject identifier
         http://psi.topicmaps.org/iso13250/model/topic-name).
 
@@ -208,25 +208,27 @@ class Topic (Construct, ConstructFields):
 
         :param value: the string value of the name
         :type value: string
-        :param type: the name type
-        :type type: `Topic`
+        :param name_type: the name type
+        :type name_type: `Topic`
         :param scope: a list of themes
-        :type scope: list
+        :type scope: `Topic` or list of `Topic`s
         :rtype: `Name`
 
         """
         if value is None:
             raise ModelConstraintException(self, 'The value may not be None')
-        if type is None:
-            type = self.topic_map.create_topic_by_subject_identifier(
+        if name_type is None:
+            name_type = self.topic_map.create_topic_by_subject_identifier(
                 Locator('http://psi.topicmaps.org/iso13250/model/topic-name'))
-        elif self.topic_map != type.topic_map:
+        elif self.topic_map != name_type.topic_map:
             raise ModelConstraintException(
                 self, 'The type is not from the same topic map')
         name = Name(topic=self, value=value, topic_map=self.topic_map,
-                    type=type)
+                    type=name_type)
         name.save()
         if scope is not None:
+            if type(scope) not in (type([]), type(())):
+                scope = [scope]
             for theme in scope:
                 if self.topic_map != theme.topic_map:
                     raise ModelConstraintException(
