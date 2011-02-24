@@ -1,5 +1,19 @@
 """Module containing TMAPI exception classes."""
 
+class IllegalArgumentException (Exception):
+
+    """Exception to match Java's exception of the same name."""
+
+    pass
+
+
+class UnsupportedOperationException (Exception):
+
+    """Exception to match Java's exception of the same name."""
+
+    pass
+
+
 class TMAPIException (Exception):
 
     """Base class for all standard (non run-time) exceptions thrown by

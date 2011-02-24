@@ -1,7 +1,11 @@
 from django.contrib.sites.models import Site
 from django.db import models
 
-from tmapi.exceptions import ModelConstraintException
+from tmapi.exceptions import ModelConstraintException, \
+    UnsupportedOperationException
+from tmapi.indices.literal_index import LiteralIndex
+from tmapi.indices.scoped_index import ScopedIndex
+from tmapi.indices.type_instance_index import TypeInstanceIndex
 
 from association import Association
 from construct_fields import BaseConstructFields
@@ -248,6 +252,20 @@ class TopicMap (BaseConstructFields, Reifiable):
         except ItemIdentifier.DoesNotExist:
             construct = None
         return construct
+
+    def get_index (self, index_interface):
+        """Returns the specified index.
+
+        :param index_interface: the index to return
+        :type index_interface: class
+        :rtype: `Index`
+
+        """
+        if index_interface not in (LiteralIndex, ScopedIndex,
+                                   TypeInstanceIndex):
+            raise UnsupportedOperationException(
+                'This TMAPI implementation does not support that index')
+        return index_interface(self)
     
     def get_locator (self):
         """Returns the `Locator` that was used to create the topic map.
