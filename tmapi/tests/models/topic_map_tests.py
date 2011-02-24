@@ -1,6 +1,7 @@
 """Module containing tests for the TopicMap model."""
 
-from tmapi.exceptions import ModelConstraintException
+from tmapi.exceptions import ModelConstraintException, \
+    UnsupportedOperationException
 
 from tmapi_test_case import TMAPITestCase
 
@@ -181,3 +182,12 @@ class TopicMapTest (TMAPITestCase):
         self.assertEqual(1, topic.get_item_identifiers().count())
         self.assertEqual(0, topic.get_subject_locators().count())
         self.assertEqual(topic, t)
+
+    def test_get_index (self):
+        self.assertRaises(UnsupportedOperationException, self.tm.get_index,
+                          BogusIndex)
+
+
+class BogusIndex (object):
+
+    pass
