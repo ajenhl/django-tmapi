@@ -105,7 +105,7 @@ class TopicTest (TMAPITestCase):
         self.assertEqual(0, player.get_roles_played(unused_type).count())
 
     def test_role_filter_illegal (self):
-        # This test seems inapplicable in Python.
+        # This test is not applicable to this implementation.
         pass
 
     def test_role_association_filter (self):
