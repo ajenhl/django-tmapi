@@ -29,26 +29,8 @@ class ScopedIndex (Index):
 
         """
         associations = self.topic_map.get_associations()
-        if themes is not None:
-            if isinstance(themes, Topic):
-                associations = associations.filter(scope=themes)
-            elif match_all:
-                for theme in themes:
-                    associations = associations.filter(scope=theme)
-            else:
-                query = None
-                for theme in themes:
-                    if query is None:
-                        query = Q(scope=theme)
-                    else:
-                        query = query | Q(scope=theme)
-                associations = associations.filter(query)
-        else:
-            if match_all:
-                raise IllegalArgumentException(
-                    'match_all must not be specified if themes is None')
-            associations = associations.filter(scope=None)
-        return associations.distinct()
+        associations = self._get_constructs(associations, themes, match_all)
+        return associations
 
     def get_association_themes (self):
         """Returns the topics in the topic map used in the scope
@@ -82,26 +64,8 @@ class ScopedIndex (Index):
 
         """
         names = Name.objects.filter(topic__topic_map=self.topic_map)
-        if themes is not None:
-            if isinstance(themes, Topic):
-                names = names.filter(scope=themes)
-            elif match_all:
-                for theme in themes:
-                    names = names.filter(scope=theme)
-            else:
-                query = None
-                for theme in themes:
-                    if query is None:
-                        query = Q(scope=theme)
-                    else:
-                        query = query | Q(scope=theme)
-                names = names.filter(query)
-        else:
-            if match_all:
-                raise IllegalArgumentException(
-                    'match_all must not be specified if themes is None')
-            names = names.filter(scope=None)
-        return names.distinct()
+        names = self._get_constructs(names, themes, match_all)
+        return names
 
     def get_name_themes (self):
         """Returns the topics in the topic map used in the scope
@@ -135,26 +99,8 @@ class ScopedIndex (Index):
 
         """
         occurrences = Occurrence.objects.filter(topic__topic_map=self.topic_map)
-        if themes is not None:
-            if isinstance(themes, Topic):
-                occurrences = occurrences.filter(scope=themes)
-            elif match_all:
-                for theme in themes:
-                    occurrences = occurrences.filter(scope=theme)
-            else:
-                query = None
-                for theme in themes:
-                    if query is None:
-                        query = Q(scope=theme)
-                    else:
-                        query = query | Q(scope=theme)
-                occurrences = occurrences.filter(query)
-        else:
-            if match_all:
-                raise IllegalArgumentException(
-                    'match_all must not be specified if themes is None')
-            occurrences = occurrences.filter(scope=None)
-        return occurrences.distinct()
+        occurrences = self._get_constructs(occurrences, themes, match_all)
+        return occurrences
 
     def get_occurrence_themes (self):
         """Returns the topics in the topic map used in the scope
@@ -217,3 +163,46 @@ class ScopedIndex (Index):
         """
         return self.topic_map.get_topics().exclude(scoped_variants=None,
                                                    scoped_names=None)
+
+    def _get_constructs (self, constructs, themes, match_all):
+        """Returns those members of `constructs` whose scope property
+        contains at least one of the specified `themes`.
+
+        If `themes` is None, all members of `constructs` in the
+        unconstrained scope are returned.
+
+        If `match_all` is True, the scope property of a member of
+        `constructs` must match all `themes`.
+
+        The return value may be empty but must never be None.
+
+        :param constructs: `Construct`s to be filtered
+        :type constructs: `QuerySet` of `Construct`s
+        :param themes: scope of the members of `constructs` to be returned
+        :type themes: `Topic` or list of `Topic`s
+        :param match_all: whether a member of `constructs`'s scope
+          property must match all `themes`
+        :type match_all: boolean
+        :rtype: `QuerySet` of `Construct`s
+
+        """
+        if themes is not None:
+            if isinstance(themes, Topic):
+                constructs = constructs.filter(scope=themes)
+            elif match_all:
+                for theme in themes:
+                    constructs = constructs.filter(scope=theme)
+            else:
+                query = None
+                for theme in themes:
+                    if query is None:
+                        query = Q(scope=theme)
+                    else:
+                        query = query | Q(scope=theme)
+                constructs = constructs.filter(query)
+        else:
+            if match_all:
+                raise IllegalArgumentException(
+                    'match_all must not be specified if themes is None')
+            constructs = constructs.filter(scope=None)
+        return constructs.distinct()
