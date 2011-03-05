@@ -38,9 +38,9 @@ class TypeInstanceIndexTest (TMAPITestCase):
         self.assertTrue(type1 in self._index.get_topics())
         self.assertTrue(type2 in self._index.get_topics())
         self.assertEqual(0, self._index.get_topics(
-                topic_types=[type1, type2], match_all=False).count())
+                [type1, type2], match_all=False).count())
         self.assertEqual(0, self._index.get_topics(
-                topic_types=[type1, type2], match_all=True).count())
+                [type1, type2], match_all=True).count())
         # Topic with one type.
         topic.add_type(type1)
         self._update_index()
@@ -53,13 +53,13 @@ class TypeInstanceIndexTest (TMAPITestCase):
         self.assertFalse(topic in self._index.get_topics())
         self.assertTrue(type1 in self._index.get_topics())
         self.assertTrue(type2 in self._index.get_topics())
-        self.assertEqual(1, self._index.get_topics(topic_type=type1).count())
+        self.assertEqual(1, self._index.get_topics(type1).count())
         self.assertEqual(1, self._index.get_topics(
-                topic_types=[type1, type2], match_all=False).count())
+                [type1, type2], match_all=False).count())
         self.assertTrue(topic in self._index.get_topics(
-                topic_types=[type1, type2], match_all=False))
+                [type1, type2], match_all=False))
         self.assertEqual(0, self._index.get_topics(
-                topic_types=[type1, type2], match_all=True).count())
+                [type1, type2], match_all=True).count())
         # Topic with two types.
         topic.add_type(type2)
         self._update_index()
@@ -73,18 +73,18 @@ class TypeInstanceIndexTest (TMAPITestCase):
         self.assertFalse(topic in self._index.get_topics())
         self.assertTrue(type1 in self._index.get_topics())
         self.assertTrue(type2 in self._index.get_topics())
-        self.assertEqual(1, self._index.get_topics(topic_type=type1).count())
-        self.assertTrue(topic in self._index.get_topics(topic_type=type1))
-        self.assertEqual(1, self._index.get_topics(topic_type=type2).count())
-        self.assertTrue(topic in self._index.get_topics(topic_type=type2))
+        self.assertEqual(1, self._index.get_topics(type1).count())
+        self.assertTrue(topic in self._index.get_topics(type1))
+        self.assertEqual(1, self._index.get_topics(type2).count())
+        self.assertTrue(topic in self._index.get_topics(type2))
         self.assertEqual(1, self._index.get_topics(
-                topic_types=[type1, type2], match_all=False).count())
+                [type1, type2], match_all=False).count())
         self.assertTrue(topic in self._index.get_topics(
-                topic_types=[type1, type2], match_all=False))
+                [type1, type2], match_all=False))
         self.assertEqual(1, self._index.get_topics(
-                topic_types=[type1, type2], match_all=True).count())
+                [type1, type2], match_all=True).count())
         self.assertTrue(topic in self._index.get_topics(
-                topic_types=[type1, type2], match_all=True))
+                [type1, type2], match_all=True))
         # Topic removal.
         topic.remove()
         self._update_index()
@@ -95,12 +95,12 @@ class TypeInstanceIndexTest (TMAPITestCase):
             self.assertEqual(2, self._index.get_topics().count())
         self.assertTrue(type1 in self._index.get_topics())
         self.assertTrue(type2 in self._index.get_topics())
-        self.assertEqual(0, self._index.get_topics(topic_type=type1).count())
-        self.assertEqual(0, self._index.get_topics(topic_type=type2).count())
+        self.assertEqual(0, self._index.get_topics(type1).count())
+        self.assertEqual(0, self._index.get_topics(type2).count())
         self.assertEqual(0, self._index.get_topics(
-                topic_types=[type1, type2], match_all=False).count())
+                [type1, type2], match_all=False).count())
         self.assertEqual(0, self._index.get_topics(
-                topic_types=[type1, type2], match_all=True).count())
+                [type1, type2], match_all=True).count())
 
     def test_association (self):
         type = self.create_topic()

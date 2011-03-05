@@ -1,7 +1,7 @@
 from django.db.models import Q
 
 from tmapi.indices.index import Index
-from tmapi.models import Name, Occurrence, Role
+from tmapi.models import Name, Occurrence, Role, Topic
 
 
 class TypeInstanceIndex (Index):
@@ -115,11 +115,10 @@ class TypeInstanceIndex (Index):
         """
         return self.topic_map.get_topics().exclude(typed_roles=None)
 
-    def get_topics (self, topic_type=None, topic_types=None, match_all=False):
-        """Returns the topics which are an instance of the specified
-        `topic_type`, or an instance of at least on of the specified
-        `topic_types`, or all topics which are not an instance of
-        another topic (iff `topic_type` and `topic_types` are None).
+    def get_topics (self, topic_types=None, match_all=False):
+        """Returns the topics which are an instance of at least one of
+        the specified `topic_types`, or all topics which are not an
+        instance of another topic (iff `topic_types` is None).
 
         If `match_all` is True, a topic must be an instance of all
         `topic_types`; if False, the topic must be an instace of at
@@ -127,10 +126,8 @@ class TypeInstanceIndex (Index):
         
         The return value may be empty but must never by None.
 
-        :param topic_type: the type of the `Topic`s to be returned
-        :type topic_type: `Topic`
         :param topic_types: types of the `Topic`s to be returned
-        :type topic_types: list
+        :type topic_types: `Topic` or list of `Topic`s
         :param match_all: whether a topic must be an instance of only
           one or all `topic_types`
         :type match_all: boolean
@@ -138,12 +135,10 @@ class TypeInstanceIndex (Index):
         
         """
         topics = self.topic_map.get_topics()
-        if topic_type is not None:
-            if topic_types is not None:
-                raise Exception('This is a broken call to get_topics, specifying both a topic_type and topic_types')
-            topics = topics.filter(types=topic_type)
-        elif topic_types is not None:
-            if match_all:
+        if topic_types is not None:
+            if isinstance(topic_types, Topic):
+                topics = topics.filter(types=topic_types)
+            elif match_all:
                 for topic_type in topic_types:
                     topics = topics.filter(types=topic_type)
             else:
