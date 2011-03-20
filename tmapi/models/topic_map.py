@@ -1,3 +1,17 @@
+# Copyright 2011 Jamie Norrish (jamie@artefact.org.nz)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from django.contrib.sites.models import Site
 from django.db import models
 
@@ -31,6 +45,10 @@ class TopicMap (BaseConstructFields, Reifiable):
 
     class Meta:
         app_label = 'tmapi'
+
+    def __init__ (self, *args, **kwargs):
+        super(TopicMap, self).__init__(*args, **kwargs)
+        self._indices = {}
 
     def create_association (self, association_type, scope=None):
         """Creates an `Association` in this topic map with the
@@ -228,7 +246,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         
         """
         try:
-            identifier = Identifier.objects.get(pk=id,
+            identifier = Identifier.objects.get(pk=int(id),
                                                 containing_topic_map=self)
             construct = identifier.get_construct()
         except Identifier.DoesNotExist:
@@ -265,7 +283,9 @@ class TopicMap (BaseConstructFields, Reifiable):
                                    TypeInstanceIndex):
             raise UnsupportedOperationException(
                 'This TMAPI implementation does not support that index')
-        return index_interface(self)
+        if index_interface not in self._indices:
+            self._indices[index_interface] = index_interface(self)
+        return self._indices[index_interface]
     
     def get_locator (self):
         """Returns the `Locator` that was used to create the topic map.
