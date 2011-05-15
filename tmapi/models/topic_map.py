@@ -390,6 +390,14 @@ class TopicMap (BaseConstructFields, Reifiable):
     def remove (self):
         self.delete()
 
+    def __eq__ (self, other):
+        if isinstance(other, TopicMap) and self.id == other.id:
+            return True
+        return False
+
+    def __ne__ (self, other):
+        return not(self.__eq__(other))
+        
     def __unicode__ (self):
         name = self.title or 'Topic map'
         return u'%s (%s)' % (name, self.iri)
