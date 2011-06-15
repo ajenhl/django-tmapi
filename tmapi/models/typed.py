@@ -43,6 +43,7 @@ class Typed (Construct, models.Model):
 
         :param construct_type: the `Topic` that should define the
           nature of this construct
+        :type construct_type: `Topic`
 
         """
         if construct_type is None:

@@ -368,6 +368,7 @@ class Topic (Construct, ConstructFields):
         :param association_type: the type of the `Association` of
           which the returned roles must be part
         :type association_type: `Topic` or None
+        :rtype: `QuerySet` of `Role`s
         
         """
         roles = []
@@ -578,4 +579,3 @@ class Topic (Construct, ConstructFields):
                 has_typed_constructs = True
                 break
         return has_typed_constructs
-        

@@ -53,6 +53,7 @@ class Role (ConstructFields, Reifiable, Typed):
         Any previous role player will be overridden by `player`.
 
         :param player: the `Topic` which should play this role
+        :type player: `Topic`
 
         """
         if player is None:
