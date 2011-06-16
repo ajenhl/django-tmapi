@@ -313,7 +313,7 @@ class Topic (Construct, ConstructFields):
         else:
             return self.names.filter(type=name_type)
 
-    def get_occurrences (self, occurrence_type=None):
+    def get_occurrences (self, occurrence_type=None, proxy=None):
         """Returns the `Occurrence`s of this topic.
 
         If `occurrence_type` is not None, returns the `Occurrence`s of
@@ -321,13 +321,21 @@ class Topic (Construct, ConstructFields):
 
         :param occurrence_type: the type of the `Occurrence`s to be returned
         :type occurrence_type: `Topic`
+        :param proxy: Django proxy model
+        :type proxy: class
         :rtype: `QuerySet` of `Occurrence`s
 
         """
-        if occurrence_type is None:
-            return self.occurrences.all()
+        if proxy is not None:
+            occurrences = proxy.objects.filter(topic=self)
+            if occurrence_type is not None:
+                occurrences = occurrences.filter(type=occurrence_type)
         else:
-            return self.occurrences.filter(type__pk=occurrence_type.id)
+            if occurrence_type is None:
+                occurrences = self.occurrences.all()
+            else:
+                occurrences = self.occurrences.filter(type=occurrence_type)
+        return occurrences
 
     def get_parent (self):
         """Returns the `TopicMap` to which this topic belongs.
