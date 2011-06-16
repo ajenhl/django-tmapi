@@ -50,13 +50,17 @@ class TopicMap (BaseConstructFields, Reifiable):
         super(TopicMap, self).__init__(*args, **kwargs)
         self._indices = {}
 
-    def create_association (self, association_type, scope=None):
+    def create_association (self, association_type, scope=None,
+                            proxy=Association):
         """Creates an `Association` in this topic map with the
         specified type and scope.
 
         :param association_type: the association type
         :type association_type: `Topic`
-        :param scope: list of `Topic`s
+        :param scope: scope
+        :type scope: list of `Topic`s
+        :param proxy: Django proxy model class
+        :type proxy: class
         :rtype: `Association`
 
         """
@@ -65,7 +69,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         if self != association_type.topic_map:
             raise ModelConstraintException(
                 self, 'The type is not from this topic map')
-        association = Association(type=association_type, topic_map=self)
+        association = proxy(type=association_type, topic_map=self)
         association.save()
         if scope is None:
             scope = []
@@ -99,7 +103,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         """
         return Locator(reference)
         
-    def create_topic (self):
+    def create_topic (self, proxy=Topic):
         """Returns a `Topic` instance with an automatically generated
         item identifier.
 
@@ -109,10 +113,12 @@ class TopicMap (BaseConstructFields, Reifiable):
         Returns the newly created `Topic` instance with an automatically
         generated item identifier.
 
+        :param proxy: Django proxy model class
+        :type proxy: class
         :rtype: `Topic`
 
         """
-        topic = Topic(topic_map=self)
+        topic = proxy(topic_map=self)
         topic.save()
         address = 'http://%s/tmapi/iid/auto/%d' % \
             (Site.objects.get_current().domain, topic.id)
@@ -237,18 +243,22 @@ class TopicMap (BaseConstructFields, Reifiable):
         """
         return self.association_constructs.all()
 
-    def get_construct_by_id (self, id):
+    def get_construct_by_id (self, id, proxy=None):
         """Returns a `Construct` by its (system specific) identifier.
 
         :param id: the identifier of the construct to be returned
         :type id: string
-        :rtype: `Construct` or None
+        :param proxy: Django proxy model
+        :type proxy: class
+        :rtype: `Construct`, proxy object, or None
         
         """
         try:
             identifier = Identifier.objects.get(pk=int(id),
                                                 containing_topic_map=self)
             construct = identifier.get_construct()
+            if proxy is not None and construct is not None:
+                construct = proxy.objects.get(pk=construct.id)
         except Identifier.DoesNotExist:
             construct = None
         return construct

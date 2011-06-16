@@ -250,7 +250,8 @@ class Topic (Construct, ConstructFields):
                 name.scope.add(theme)
         return name
 
-    def create_occurrence (self, type, value, scope=None, datatype=None):
+    def create_occurrence (self, type, value, scope=None, datatype=None,
+                           proxy=Occurrence):
         """Creates an `Occurrence` for this topic with the specified
         `type`, `value`, and `scope`.
 
@@ -280,9 +281,9 @@ class Topic (Construct, ConstructFields):
         if self.topic_map != type.topic_map:
             raise ModelConstraintException(
                 self, 'The type is not from the same topic map')
-        occurrence = Occurrence(type=type, value=value,
-                                datatype=datatype.to_external_form(),
-                                topic=self, topic_map=self.topic_map)
+        occurrence = proxy(type=type, value=value,
+                           datatype=datatype.to_external_form(),
+                           topic=self, topic_map=self.topic_map)
         occurrence.save()
         if scope is not None:
             for theme in scope:

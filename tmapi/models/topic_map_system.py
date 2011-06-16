@@ -41,7 +41,7 @@ class TopicMapSystem (models.Model):
         """
         return Locator(reference)
     
-    def create_topic_map (self, iri):
+    def create_topic_map (self, iri, proxy=TopicMap):
         """Creates a new `TopicMap` and stores it within the system
         under the specified `iri`.
 
@@ -55,7 +55,7 @@ class TopicMapSystem (models.Model):
         if self.get_topic_map(iri) is not None:
             raise TopicMapExistsException()
         reference = iri.to_external_form()
-        tm = TopicMap(topic_map_system=self, iri=reference)
+        tm = proxy(topic_map_system=self, iri=reference)
         tm.save()
         return tm
 

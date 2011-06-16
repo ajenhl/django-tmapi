@@ -31,21 +31,27 @@ class Role (ConstructFields, Reifiable, Typed):
     class Meta:
         app_label = 'tmapi'
 
-    def get_parent (self):
+    def get_parent (self, proxy=None):
         """Returns the `Association` to which this role belongs.
 
         :rtype: `Association`
         
         """
-        return self.association
+        parent = self.association
+        if proxy is not None:
+            parent = proxy.objects.get(pk=parent.id)
+        return parent
 
-    def get_player (self):
+    def get_player (self, proxy=None):
         """Returns the topic playing this role.
 
         :rtype: `Topic`
         
         """
-        return self.player
+        player = self.player
+        if proxy is not None:
+            player = proxy.objects.get(pk=player.id)
+        return player
 
     def set_player (self, player):
         """Sets the role player.
