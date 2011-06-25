@@ -209,7 +209,7 @@ class Topic (Construct, ConstructFields):
                 self, 'The type is not from the same topic map')
         self.types.add(type)
 
-    def create_name (self, value, name_type=None, scope=None):
+    def create_name (self, value, name_type=None, scope=None, proxy=Name):
         """Creates a `Name` for this topic with the specified `value`,
         `type` and `scope`.
 
@@ -237,7 +237,7 @@ class Topic (Construct, ConstructFields):
         elif self.topic_map != name_type.topic_map:
             raise ModelConstraintException(
                 self, 'The type is not from the same topic map')
-        name = Name(topic=self, value=value, topic_map=self.topic_map,
+        name = proxy(topic=self, value=value, topic_map=self.topic_map,
                     type=name_type)
         name.save()
         if scope is not None:
