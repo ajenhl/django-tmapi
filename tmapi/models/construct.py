@@ -97,7 +97,7 @@ class Construct (object):
         """
         raise NotImplementedError
 
-    def get_topic_map (self):
+    def get_topic_map (self, proxy=None):
         """Returns the `TopicMap` instance to which this Topic Maps
         construct belongs.
 
@@ -106,7 +106,11 @@ class Construct (object):
         :rtype: `TopicMap`
 
         """
-        return self.topic_map
+        if proxy is None:
+            topic_map = self.topic_map
+        else:
+            topic_map = proxy.objects.get(pk=self.topic_map.id)
+        return topic_map
 
     def remove (self):
         """Deletes this construct from its parent container.
