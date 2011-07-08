@@ -226,6 +226,8 @@ class Topic (Construct, ConstructFields):
         :type name_type: `Topic`
         :param scope: a list of themes
         :type scope: `Topic` or list of `Topic`s
+        :param proxy: Django proxy model
+        :type proxy: class
         :rtype: `Name`
 
         """
@@ -266,6 +268,8 @@ class Topic (Construct, ConstructFields):
         :type scope: list of `Topic`s
         :param datatype: optional locator indicating the datatype of `value`
         :type datatype: `Locator`
+        :param proxy: Django proxy model
+        :type proxy: class
         :rtype: `Occurrence`
         
         """

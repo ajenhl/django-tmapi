@@ -26,11 +26,17 @@ class Occurrence (ConstructFields, DatatypeAware, Typed):
     class Meta:
         app_label = 'tmapi'
 
-    def get_parent (self):
+    def get_parent (self, proxy=None):
         """Returns the `Topic` to which this occurrence belongs.
 
+        :param proxy: Django proxy model
+        :type proxy: class
         :rtype: `Topic`
         
         """
-        return self.topic
+        if proxy is None:
+            topic = self.topic
+        else:
+            topic = proxy.objects.get(pk=self.topic.id)
+        return topic
         

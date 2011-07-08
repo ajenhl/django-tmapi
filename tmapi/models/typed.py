@@ -30,13 +30,18 @@ class Typed (Construct, models.Model):
         abstract = True
         app_label = 'tmapi'
     
-    def get_type (self):
+    def get_type (self, proxy=None):
         """Returns the type of this construct.
 
+        :param proxy: Django proxy model
+        :type proxy: class
         :rtype: the `Topic` that represents the type
 
         """
-        return self.type
+        construct_type = self.type
+        if proxy is not None:
+            construct_type = proxy.objects.get(pk=construct_type.pk)
+        return construct_type
 
     def set_type (self, construct_type):
         """Sets the type of this construct. Any previous type is overridden.
