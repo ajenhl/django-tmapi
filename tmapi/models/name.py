@@ -75,9 +75,18 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
             variant.scope.add(theme)
         return variant
         
-    def get_parent (self):
-        """Returns the `Topic` to which this name belongs."""
-        return self.topic
+    def get_parent (self, proxy=None):
+        """Returns the `Topic` to which this name belongs.
+
+        :param proxy: Django proxy model class
+        :type proxy: class
+        :rtype: `Topic` or `proxy`
+
+        """
+        parent = self.topic
+        if proxy is not None:
+            parent = proxy.objects.get(pk=parent.id)
+        return parent
 
     def get_value (self):
         """Returns the value of this name."""
