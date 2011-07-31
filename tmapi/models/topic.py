@@ -16,7 +16,7 @@
 
 from django.db import models
 
-from tmapi.constants import AUTOMERGE_FEATURE_STRING, XSD_ANY_URI, XSD_STRING
+from tmapi.constants import AUTOMERGE_FEATURE_STRING, XSD_ANY_URI, XSD_FLOAT, XSD_INT, XSD_LONG, XSD_STRING
 from tmapi.exceptions import IdentityConstraintException, \
     ModelConstraintException, TopicInUseException
 
@@ -280,6 +280,12 @@ class Topic (Construct, ConstructFields):
         if datatype is None:
             if isinstance(value, Locator):
                 datatype = Locator(XSD_ANY_URI)
+            elif isinstance(value, float):
+                datatype = Locator(XSD_FLOAT)
+            elif isinstance(value, int):
+                datatype = Locator(XSD_INT)
+            elif isinstance(value, long):
+                datatype = Locator(XSD_LONG)
             else:
                 datatype = Locator(XSD_STRING)
         if self.topic_map != type.topic_map:

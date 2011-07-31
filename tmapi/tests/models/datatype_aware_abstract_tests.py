@@ -28,7 +28,9 @@ class DatatypeAwareAbstractTestCase (TMAPITestCase):
 
     _XSD = 'http://www.w3.org/2001/XMLSchema#'
     _XSD_ANY_URI = _XSD + 'anyURI'
+    _XSD_FLOAT = _XSD + 'float'
     _XSD_INT = _XSD + 'int'
+    _XSD_LONG = _XSD + 'long'
     _XSD_STRING = _XSD + 'string'
     
     def get_datatype_aware (self):
@@ -38,8 +40,70 @@ class DatatypeAwareAbstractTestCase (TMAPITestCase):
         super(DatatypeAwareAbstractTestCase, self).setUp()
         self.tm = self.tms.create_topic_map('http://www.example.org/tm/')
         self._xsd_any_uri = self.tms.create_locator(self._XSD_ANY_URI)
+        self._xsd_float = self.tms.create_locator(self._XSD_FLOAT)
         self._xsd_int = self.tms.create_locator(self._XSD_INT)
+        self._xsd_long = self.tms.create_locator(self._XSD_LONG)
         self._xsd_string = self.tms.create_locator(self._XSD_STRING)
+
+    def test_float (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = 1.3
+        dt.set_value(value)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_float, dt.get_datatype())
+
+    def test_float_explicit (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = 1.3
+        dt.set_value(value, self._xsd_float)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_float, dt.get_datatype())
+        
+    def test_int (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = 1
+        dt.set_value(value)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_int, dt.get_datatype())
+
+    def test_int_explicit (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = 1
+        dt.set_value(value, self._xsd_int)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_int, dt.get_datatype())
+
+    def test_long (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = long(1.3)
+        dt.set_value(value)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_long, dt.get_datatype())
+
+    def test_long_explicit (self):
+        try:
+            dt = self.get_datatype_aware()
+        except NotImplementedError:
+            return
+        value = long(1.3)
+        dt.set_value(value, self._xsd_long)
+        self.assertEqual(value, dt.get_value())
+        self.assertEqual(self._xsd_long, dt.get_datatype())
 
     def test_string (self):
         try:

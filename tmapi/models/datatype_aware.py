@@ -44,7 +44,15 @@ class DatatypeAware (Reifiable, Scoped):
         
     def get_value (self):
         """Returns the lexical representation of the value."""
-        return self.value
+        datatype = self.datatype
+        value = self.value
+        if datatype == XSD_FLOAT:
+            value = float(value)
+        elif datatype == XSD_INT:
+            value = int(value)
+        elif datatype == XSD_LONG:
+            value = long(value)
+        return value
 
     def locator_value (self):
         """Returns the `Locator` representation of the value.
