@@ -24,9 +24,9 @@ from typed import Typed
 class Role (ConstructFields, Reifiable, Typed):
 
     """Represents an association role item."""
-    
+
     association = models.ForeignKey('Association', related_name='roles')
-    player = models.ForeignKey('Topic', related_name='role_players')
+    player = models.ForeignKey('Topic', related_name='roles')
 
     class Meta:
         app_label = 'tmapi'
@@ -35,7 +35,7 @@ class Role (ConstructFields, Reifiable, Typed):
         """Returns the `Association` to which this role belongs.
 
         :rtype: `Association`
-        
+
         """
         parent = self.association
         if proxy is not None:
@@ -46,7 +46,7 @@ class Role (ConstructFields, Reifiable, Typed):
         """Returns the topic playing this role.
 
         :rtype: `Topic`
-        
+
         """
         player = self.player
         if proxy is not None:

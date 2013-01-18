@@ -37,7 +37,7 @@ from signature import generate_association_signature, \
 class Topic (Construct, ConstructFields):
 
     """Represents a topic item."""
-    
+
     types = models.ManyToManyField('self', symmetrical=False, blank=True,
                                    related_name='typed_topics')
 
@@ -101,13 +101,13 @@ class Topic (Construct, ConstructFields):
 
         :param address: external form of a locator
         :type address: string
-        
+
         """
         ii = ItemIdentifier(address=address,
                             containing_topic_map=self.topic_map)
         ii.save()
         self.item_identifiers.add(ii)
-        
+
     def add_subject_identifier (self, subject_identifier):
         """Adds a subject identifier to this topic.
 
@@ -118,7 +118,7 @@ class Topic (Construct, ConstructFields):
 
         :param subject_identifier: the subject identifier to be added
         :type subject_identifier: `Locator`
-        
+
         """
         if subject_identifier is None:
             raise ModelConstraintException(
@@ -155,13 +155,13 @@ class Topic (Construct, ConstructFields):
 
         :param address: external form of a locator
         :type address: string
-        
+
         """
         si = SubjectIdentifier(topic=self, address=address,
                                containing_topic_map=self.topic_map)
         si.save()
         self.subject_identifiers.add(si)
-            
+
     def add_subject_locator (self, subject_locator):
         """Adds a subject locator to this topic.
 
@@ -194,13 +194,13 @@ class Topic (Construct, ConstructFields):
                                 containing_topic_map=self.topic_map)
             sl.save()
             self.subject_locators.add(sl)
-    
+
     def add_type (self, type):
         """Adds a type to this topic.
 
         :param type: the type of which this topic should become an instance
         :type type: `Topic`
-        
+
         """
         if type is None:
             raise ModelConstraintException(self, 'The type may not be None')
@@ -271,7 +271,7 @@ class Topic (Construct, ConstructFields):
         :param proxy: Django proxy model
         :type proxy: class
         :rtype: `Occurrence`
-        
+
         """
         if type is None:
             raise ModelConstraintException(self, 'The type may not be None')
@@ -316,7 +316,7 @@ class Topic (Construct, ConstructFields):
         :param name_type: the type of the `Name`s to be returned
         :type name_type: `Topic`
         :rtype: `QuerySet` of `Name`s
-        
+
         """
         if name_type is None:
             return self.names.all()
@@ -371,7 +371,7 @@ class Topic (Construct, ConstructFields):
             except:
                 pass
         return reified
-        
+
     def get_roles_played (self, role_type=None, association_type=None):
         """Returns the roles played by this topic.
 
@@ -388,24 +388,24 @@ class Topic (Construct, ConstructFields):
           which the returned roles must be part
         :type association_type: `Topic` or None
         :rtype: `QuerySet` of `Role`s
-        
+
         """
         roles = []
         if role_type is not None:
-            roles = self.role_players.filter(type=role_type)
+            roles = self.roles.filter(type=role_type)
             if association_type is not None:
                 roles = roles.filter(association__type=association_type)
         elif association_type is not None:
             raise Exception('This is a broken call to get_roles_played, specifying an assocation type but not a role type')
         else:
-            roles = self.role_players.all()
+            roles = self.roles.all()
         return roles
-        
+
     def get_subject_identifiers (self):
         """Returns the subject identifiers assigned to this topic.
 
         :rtype: `QuerySet` of `Locator`s
-        
+
         """
         return self.subject_identifiers.all()
 
@@ -413,7 +413,7 @@ class Topic (Construct, ConstructFields):
         """Returns the subject locators assigned to this topic.
 
         :rtype: `QuerySet` of `Locator`s
-        
+
         """
         return self.subject_locators.all()
 
@@ -521,7 +521,7 @@ class Topic (Construct, ConstructFields):
         `Reifiable`.
 
         """
-        if self.role_players.count():
+        if self.roles.count():
             raise TopicInUseException(self, 'This topic is used as a player')
         if self.get_reified() is not None:
             raise TopicInUseException(self, 'This topic is used as a reifier')
@@ -530,7 +530,7 @@ class Topic (Construct, ConstructFields):
         if self._has_typed_constructs():
             raise TopicInUseException(self, 'This topic is used as a type')
         super(Topic, self).remove()
-    
+
     def remove_subject_identifier (self, subject_identifier):
         """Removes a subject identifer from this topic.
 
@@ -560,7 +560,7 @@ class Topic (Construct, ConstructFields):
             sl.delete()
         except SubjectLocator.DoesNotExist:
             pass
-    
+
     def remove_type (self, topic_type):
         """Removes a type from this topic.
 
