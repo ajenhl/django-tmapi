@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from literal_index_tests import *
-from scoped_index_tests import *
-from type_instance_index_tests import *
+from test_literal_index import *
+from test_scoped_index import *
+from test_type_instance_index import *
