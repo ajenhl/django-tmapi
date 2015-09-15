@@ -16,7 +16,7 @@ from django.db import models
 
 from tmapi.exceptions import ModelConstraintException
 
-from construct import Construct
+from .construct import Construct
 
 
 class Scoped (Construct, models.Model):
@@ -44,13 +44,13 @@ class Scoped (Construct, models.Model):
             raise ModelConstraintException(
                 self, 'The theme is not from the same topic map')
         self.scope.add(theme)
-        
+
     def get_scope (self):
         """Returns the topics which define the scope. An empty set
         represents the unconstrained scope.
 
         :rtype: `QuerySet` of `Topic`s
-        
+
         """
         return self.scope.all()
 

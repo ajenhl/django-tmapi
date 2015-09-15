@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicMergeTest (TMAPITestCase):
@@ -60,7 +60,7 @@ class TopicMergeTest (TMAPITestCase):
         self.assertEqual(topic1, association1.get_reifier())
         self.assertEqual(topic2, association2.get_reifier())
         self.assertRaises(ModelConstraintException, topic1.merge_in, topic2)
-        
+
     def test_role_playing (self):
         """Tests if a topic takes over all roles played of the other
         topic."""

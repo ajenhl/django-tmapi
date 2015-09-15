@@ -88,9 +88,9 @@ class TMAPIRuntimeException (Exception):
         self._message = message
         self._cause = cause
 
-    def __unicode__ (self):
+    def __str__ (self):
         return self._message
-    
+
 
 class ModelConstraintException (TMAPIRuntimeException):
 
@@ -109,7 +109,7 @@ class ModelConstraintException (TMAPIRuntimeException):
         """
         self._reporter = reporter
         self._message = message
-    
+
     def get_reporter (self):
         """Return the `Construct` which has thrown the exception.
 
@@ -179,7 +179,7 @@ class TopicInUseException (ModelConstraintException):
     """Thrown when an attempt is made to remove a `Topic` which is
     being used as a type, as a reifier, or as a role player in an
     association, or in a scope."""
-    
+
     def __init__ (self, topic, message):
         """Creates a new `TopicInUseException` with the specified message.
 

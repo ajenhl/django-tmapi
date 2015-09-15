@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class ReifiableTest (TMAPITestCase):
@@ -77,7 +77,7 @@ class ReifiableTest (TMAPITestCase):
         try:
             reifiable.set_reifier(reifier)
             self.fail('The reifier already reifies another construct')
-        except ModelConstraintException, ex:
+        except ModelConstraintException as ex:
             self.assertEqual(reifiable, ex.get_reporter())
         other_reifiable.set_reifier(None)
         self.assertEqual(None, other_reifiable.get_reifier(),

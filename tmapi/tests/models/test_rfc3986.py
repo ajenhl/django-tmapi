@@ -20,7 +20,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 """
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class RFC3986Test (TMAPITestCase):

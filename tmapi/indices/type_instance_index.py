@@ -113,7 +113,7 @@ class TypeInstanceIndex (Index):
         :param role_type: the type of the `Role`s to be returned
         :type role_type: `Topic`
         :rtype: `QuerySet` of `Role`s
-        
+
         """
         return Role.objects.filter(topic_map=self.topic_map).filter(
             type=role_type)
@@ -137,7 +137,7 @@ class TypeInstanceIndex (Index):
         If `match_all` is True, a topic must be an instance of all
         `topic_types`; if False, the topic must be an instace of at
         least one type.
-        
+
         The return value may be empty but must never by None.
 
         :param topic_types: types of the `Topic`s to be returned
@@ -146,7 +146,7 @@ class TypeInstanceIndex (Index):
           one or all `topic_types`
         :type match_all: boolean
         :rtype: `QuerySet` of `Topic`s
-        
+
         """
         topics = self.topic_map.get_topics()
         if topic_types is not None:
@@ -177,4 +177,3 @@ class TypeInstanceIndex (Index):
 
         """
         return self.topic_map.get_topics().exclude(typed_topics=None)
-

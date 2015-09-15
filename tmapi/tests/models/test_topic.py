@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicTest (TMAPITestCase):
@@ -500,7 +500,7 @@ class TopicTest (TMAPITestCase):
     def test_name_creation_default_type_illegal_string (self):
         topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_name, None)
-                          
+
     def test_name_creation_default_type_illegal_scope_array (self):
         # This test is not applicable to this implementation.
         pass

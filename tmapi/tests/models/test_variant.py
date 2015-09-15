@@ -19,7 +19,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 """
 
-from datatype_aware_abstract_tests import DatatypeAwareAbstractTestCase
+from .datatype_aware_abstract_tests import DatatypeAwareAbstractTestCase
 
 
 class VariantTest (DatatypeAwareAbstractTestCase):

@@ -14,14 +14,14 @@
 
 from django.db import models
 
-from construct_fields import ConstructFields
-from datatype_aware import DatatypeAware
+from .construct_fields import ConstructFields
+from .datatype_aware import DatatypeAware
 
 
 class Variant (ConstructFields, DatatypeAware):
 
     """Represents a variant item."""
-    
+
     name = models.ForeignKey('Name', related_name='variants')
 
     class Meta:

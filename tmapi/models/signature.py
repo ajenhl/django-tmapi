@@ -28,7 +28,7 @@ project (http://tinytim.sourceforget.net/).
 
 """
 
-from name import Name
+from .name import Name
 
 
 def generate_association_signature (association):
@@ -142,7 +142,7 @@ def _generate_type_signature (typed):
 
     """
     return _signature(typed.get_type())
-        
+
 def _signature (topic):
     """Returns the signature of the specified topic.
 

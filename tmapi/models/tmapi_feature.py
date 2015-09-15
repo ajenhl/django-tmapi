@@ -14,6 +14,7 @@
 
 from django.db import models
 
+
 class TMAPIFeature (models.Model):
 
     topic_map_system = models.ForeignKey('TopicMapSystem',

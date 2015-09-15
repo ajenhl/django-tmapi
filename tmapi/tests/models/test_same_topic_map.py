@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class SameTopicMapTest (TMAPITestCase):
@@ -43,7 +43,7 @@ class SameTopicMapTest (TMAPITestCase):
     def test_association_creation_illegal_scope_collection (self):
         # This test is not applicable to this implementation.
         pass
-        
+
     def test_name_creation_illegal_type (self):
         topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_name,
@@ -58,7 +58,7 @@ class SameTopicMapTest (TMAPITestCase):
     def test_name_creation_illegal_scope_collection (self):
         # This test is not applicable to this implementation.
         pass
-        
+
     def test_occurrence_creation_illegal_type (self):
         topic = self.create_topic()
         self.assertRaises(ModelConstraintException, topic.create_occurrence,
@@ -73,7 +73,7 @@ class SameTopicMapTest (TMAPITestCase):
     def test_occurrence_creation_illegal_scope_collection (self):
         # This test is not applicable to this implementation.
         pass
-        
+
     def test_role_creation_illegal_type (self):
         association = self.create_association()
         self.assertRaises(ModelConstraintException, association.create_role,

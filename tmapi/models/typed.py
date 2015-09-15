@@ -16,7 +16,7 @@ from django.db import models
 
 from tmapi.exceptions import ModelConstraintException
 
-from construct import Construct
+from .construct import Construct
 
 
 class Typed (Construct, models.Model):
@@ -25,11 +25,11 @@ class Typed (Construct, models.Model):
     `Role`s, `Occurrence`s, and `Name`s are typed."""
 
     type = models.ForeignKey('Topic', related_name='typed_%(class)ss')
-    
+
     class Meta:
         abstract = True
         app_label = 'tmapi'
-    
+
     def get_type (self, proxy=None):
         """Returns the type of this construct.
 

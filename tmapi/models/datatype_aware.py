@@ -18,15 +18,15 @@ from tmapi.constants import XSD_ANY_URI, XSD_FLOAT, XSD_INT, XSD_LONG, \
     XSD_STRING
 from tmapi.exceptions import ModelConstraintException
 
-from locator import Locator
-from reifiable import Reifiable
-from scoped import Scoped
+from .locator import Locator
+from .reifiable import Reifiable
+from .scoped import Scoped
 
 
 class DatatypeAware (Reifiable, Scoped):
 
     """Common base interface for `Occurrence`s and `Variant`s."""
-    
+
     datatype = models.CharField(max_length=512, blank=True)
     value = models.TextField()
 
@@ -41,7 +41,7 @@ class DatatypeAware (Reifiable, Scoped):
 
         """
         return Locator(self.datatype)
-        
+
     def get_value (self):
         """Returns the lexical representation of the value."""
         datatype = self.datatype
@@ -51,7 +51,7 @@ class DatatypeAware (Reifiable, Scoped):
         elif datatype == XSD_INT:
             value = int(value)
         elif datatype == XSD_LONG:
-            value = long(value)
+            value = int(value)
         return value
 
     def locator_value (self):
@@ -63,7 +63,7 @@ class DatatypeAware (Reifiable, Scoped):
         if self.datatype == XSD_ANY_URI:
             return Locator(self.value)
         raise TypeError('Value is not a Locator')
-    
+
     def set_value (self, value, datatype=None):
         """Sets the value.
 
@@ -82,7 +82,7 @@ class DatatypeAware (Reifiable, Scoped):
             # (from section 1.10.3 at
             # http://cvs.zope.org/~checkout~/Packages/WebService/doc/WebService.html)
             # has the same Python type mapped to multiple XSD types.
-            if isinstance(value, str) or isinstance(value, unicode):
+            if isinstance(value, str):
                 datatype = XSD_STRING
             elif isinstance(value, Locator):
                 datatype = XSD_ANY_URI
@@ -91,8 +91,6 @@ class DatatypeAware (Reifiable, Scoped):
                 datatype = XSD_FLOAT
             elif isinstance(value, int):
                 datatype = XSD_INT
-            elif isinstance(value, long):
-                datatype = XSD_LONG
         else:
             datatype = datatype.to_external_form()
         self.value = value

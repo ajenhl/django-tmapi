@@ -21,16 +21,16 @@ from tmapi.indices.literal_index import LiteralIndex
 from tmapi.indices.scoped_index import ScopedIndex
 from tmapi.indices.type_instance_index import TypeInstanceIndex
 
-from association import Association
-from construct_fields import BaseConstructFields
-from identifier import Identifier
-from item_identifier import ItemIdentifier
-from locator import Locator
-from reifiable import Reifiable
-from subject_identifier import SubjectIdentifier
-from subject_locator import SubjectLocator
-from topic import Topic
-from copy_utils import copy
+from .association import Association
+from .construct_fields import BaseConstructFields
+from .identifier import Identifier
+from .item_identifier import ItemIdentifier
+from .locator import Locator
+from .reifiable import Reifiable
+from .subject_identifier import SubjectIdentifier
+from .subject_locator import SubjectLocator
+from .topic import Topic
+from .copy_utils import copy
 
 
 class TopicMap (BaseConstructFields, Reifiable):
@@ -89,7 +89,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         topic = Topic(topic_map=self)
         topic.save()
         return topic
-    
+
     def create_locator (self, reference):
         """Returns a `Locator` instance representing the specified IRI
         reference.
@@ -102,7 +102,7 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         return Locator(reference)
-        
+
     def create_topic (self, proxy=Topic):
         """Returns a `Topic` instance with an automatically generated
         item identifier.
@@ -164,8 +164,8 @@ class TopicMap (BaseConstructFields, Reifiable):
             ii = ItemIdentifier(address=reference, containing_topic_map=self)
             ii.save()
             topic.item_identifiers.add(ii)
-        return topic            
-    
+        return topic
+
     def create_topic_by_subject_identifier (self, subject_identifier):
         """Returns a `Topic` instance with the specified subject identifier.
 
@@ -251,7 +251,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         :param proxy: Django proxy model
         :type proxy: class
         :rtype: `Construct`, proxy object, or None
-        
+
         """
         try:
             identifier = Identifier.objects.get(pk=int(id),
@@ -262,7 +262,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         except Identifier.DoesNotExist:
             construct = None
         return construct
-    
+
     def get_construct_by_item_identifier (self, item_identifier):
         """Returns a `Construct` by its item identifier.
 
@@ -296,7 +296,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         if index_interface not in self._indices:
             self._indices[index_interface] = index_interface(self)
         return self._indices[index_interface]
-    
+
     def get_locator (self):
         """Returns the `Locator` that was used to create the topic map.
 
@@ -307,7 +307,7 @@ class TopicMap (BaseConstructFields, Reifiable):
 
         """
         return Locator(self.iri)
-    
+
     def get_parent (self):
         """Returns None.
 
@@ -363,7 +363,7 @@ class TopicMap (BaseConstructFields, Reifiable):
         except Topic.DoesNotExist:
             topic = None
         return topic
-    
+
     def get_topic_map (self):
         """Returns self.
 
@@ -407,7 +407,7 @@ class TopicMap (BaseConstructFields, Reifiable):
 
     def __ne__ (self, other):
         return not(self.__eq__(other))
-        
-    def __unicode__ (self):
+
+    def __str__ (self):
         name = self.title or 'Topic map'
-        return u'%s (%s)' % (name, self.iri)
+        return '{} ({})'.format(name, self.iri)

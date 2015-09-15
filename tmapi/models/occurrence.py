@@ -14,9 +14,9 @@
 
 from django.db import models
 
-from construct_fields import ConstructFields
-from datatype_aware import DatatypeAware
-from typed import Typed
+from .construct_fields import ConstructFields
+from .datatype_aware import DatatypeAware
+from .typed import Typed
 
 
 class Occurrence (ConstructFields, DatatypeAware, Typed):
@@ -32,11 +32,10 @@ class Occurrence (ConstructFields, DatatypeAware, Typed):
         :param proxy: Django proxy model
         :type proxy: class
         :rtype: `Topic`
-        
+
         """
         if proxy is None:
             topic = self.topic
         else:
             topic = proxy.objects.get(pk=self.topic.id)
         return topic
-        

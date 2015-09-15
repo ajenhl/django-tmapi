@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class Index (object):
+class Index:
 
     """Base class for all indices."""
 
@@ -37,7 +37,7 @@ class Index (object):
 
         """
         return True
-        
+
     def is_open (self):
         """Indicates if the index is open.
 
@@ -58,4 +58,3 @@ class Index (object):
     def reindex (self):
         """Synchronizes the index with data in the topic map."""
         pass
-            

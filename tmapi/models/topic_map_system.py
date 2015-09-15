@@ -16,9 +16,9 @@ from django.db import models
 
 from tmapi.exceptions import TopicMapExistsException, \
     FeatureNotRecognizedException
-from locator import Locator
-from tmapi_feature import TMAPIFeature
-from topic_map import TopicMap
+from .locator import Locator
+from .tmapi_feature import TMAPIFeature
+from .topic_map import TopicMap
 
 
 class TopicMapSystem (models.Model):
@@ -40,7 +40,7 @@ class TopicMapSystem (models.Model):
 
         """
         return Locator(reference)
-    
+
     def create_topic_map (self, iri, proxy=TopicMap):
         """Creates a new `TopicMap` and stores it within the system
         under the specified `iri`.
@@ -112,7 +112,7 @@ class TopicMapSystem (models.Model):
         # supports no others, so there is no need even for a store of
         # such.
         return None
-    
+
     def get_topic_map (self, iri):
         """Retrieves a `TopicMap` managed by this system with the
         specified storage address `iri`.
@@ -130,4 +130,3 @@ class TopicMapSystem (models.Model):
         except TopicMap.DoesNotExist:
             tm = None
         return tm
-        

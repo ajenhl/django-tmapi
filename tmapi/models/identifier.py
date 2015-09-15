@@ -41,5 +41,5 @@ class Identifier (models.Model):
                 pass
         return construct
 
-    def __unicode__ (self):
-        return unicode(self.id)
+    def __str__ (self):
+        return self.id

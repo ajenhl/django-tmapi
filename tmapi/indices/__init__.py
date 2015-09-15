@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from literal_index import LiteralIndex
-from scoped_index import ScopedIndex
-from type_instance_index import TypeInstanceIndex
+from .literal_index import LiteralIndex
+from .scoped_index import ScopedIndex
+from .type_instance_index import TypeInstanceIndex

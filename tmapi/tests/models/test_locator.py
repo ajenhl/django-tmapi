@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import MalformedIRIException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class LocatorTest (TMAPITestCase):

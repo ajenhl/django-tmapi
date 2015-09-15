@@ -19,7 +19,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 """
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicMapMergeTest (TMAPITestCase):
@@ -51,7 +51,7 @@ class TopicMapMergeTest (TMAPITestCase):
         topicB = self.tm2.create_topic_by_item_identifier(iidB)
         self.assertEqual(1, self.tm.get_topics().count())
         self.assertEqual(1, self.tm2.get_topics().count())
-        
+
         self.tm.merge_in(self.tm2)
         self.assertEqual(1, self.tm.get_topics().count())
         self.assertEqual(topicA, self.tm.get_construct_by_item_identifier(iidA))
@@ -59,7 +59,7 @@ class TopicMapMergeTest (TMAPITestCase):
         self.assertEqual(iidA, topicA.get_item_identifiers()[0])
         self.assertEqual(0, topicA.get_subject_identifiers().count())
         self.assertEqual(0, topicA.get_subject_locators().count())
-        
+
         # mergin_in must not have any side effects on tm2.
         self.assertEqual(1, self.tm2.get_topics().count())
         self.assertEqual(topicB,

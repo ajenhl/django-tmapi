@@ -22,7 +22,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 from tmapi.exceptions import ModelConstraintException, \
     UnsupportedOperationException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicMapTest (TMAPITestCase):
@@ -30,7 +30,7 @@ class TopicMapTest (TMAPITestCase):
     def test_parent (self):
         """Tests if TopicMap.get_parent() returns None."""
         self.assertEqual(None, self.tm.get_parent())
-        
+
     def test_topic_creation_subject_identifier (self):
         locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
@@ -62,7 +62,7 @@ class TopicMapTest (TMAPITestCase):
     def test_topic_creation_subject_locator_illegal (self):
         self.assertRaises(ModelConstraintException,
                           self.tm.create_topic_by_subject_locator, None)
-        
+
     def test_topic_creation_item_identifier (self):
         locator = self.create_locator('http://www.example.org/')
         self.assertEqual(0, self.tm.get_topics().count())
@@ -163,7 +163,7 @@ class TopicMapTest (TMAPITestCase):
     def test_association_creation_illegal_null_array_scope (self):
         # This test is not applicable in this implementation.
         pass
-        
+
     def test_get_from_topic_creation_subject_identifier (self):
         """Verify that create_topic_by_subject_indicator returns
         existing topic where that topic has an item identifier
@@ -207,6 +207,6 @@ class TopicMapTest (TMAPITestCase):
                           BogusIndex)
 
 
-class BogusIndex (object):
+class BogusIndex:
 
     pass

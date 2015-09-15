@@ -20,7 +20,7 @@ project (http://tinytim.sourceforget.net/).
 
 """
 
-from signature import generate_role_signature, generate_variant_signature
+from .signature import generate_role_signature, generate_variant_signature
 
 
 def handle_existing_construct (source, target):

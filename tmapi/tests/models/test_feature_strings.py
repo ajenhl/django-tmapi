@@ -45,7 +45,7 @@ class FeatureStringsTest (TestCase):
         """
         try:
             return self.factory.new_topic_map_system()
-        except TMAPIException, ex:
+        except TMAPIException as ex:
             raise TMAPIRuntimeException('Cannot create TopicMapSystem', ex)
 
     def _test_feature (self, feature_name):
@@ -66,7 +66,7 @@ class FeatureStringsTest (TestCase):
         self.assertEqual(enabled_in_factory, enabled_in_system,
                          'The system has a different value of ' + feature_name
                          + ' than the factory')
-        
+
     def test_type_instance_associations (self):
         """Tests the feature string "type-instance-associations"."""
         self._test_feature(self.TYPE_INSTANCE_ASSOCIATIONS)

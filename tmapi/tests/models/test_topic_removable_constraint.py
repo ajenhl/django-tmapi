@@ -22,7 +22,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import TopicInUseException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicRemovableConstraintTest (TMAPITestCase):
@@ -43,7 +43,7 @@ class TopicRemovableConstraintTest (TMAPITestCase):
         try:
             topic.remove()
             self.fail('The topic is used as a type')
-        except TopicInUseException, ex:
+        except TopicInUseException as ex:
             self.assertEqual(topic, ex.get_reporter())
         self.assertEqual(topic_count+1, self.tm.get_topics().count())
         typed.set_type(old_type)
@@ -65,13 +65,13 @@ class TopicRemovableConstraintTest (TMAPITestCase):
         try:
             topic.remove()
             self.fail('The topic is used as a theme')
-        except TopicInUseException, ex:
+        except TopicInUseException as ex:
             self.assertEqual(topic, ex.get_reporter())
         self.assertEqual(topic_count+1, self.tm.get_topics().count())
         scoped.remove_theme(topic)
         topic.remove()
         self.assertEqual(topic_count, self.tm.get_topics().count())
-        
+
     def _test_reifiable (self, reifiable):
         """Tests if the topic removable constraint is respected if a
         topic is used as a reifier.
@@ -88,7 +88,7 @@ class TopicRemovableConstraintTest (TMAPITestCase):
         try:
             topic.remove()
             self.fail('The topic is used as a reifier')
-        except TopicInUseException, ex:
+        except TopicInUseException as ex:
             self.assertEqual(topic, ex.get_reporter())
         self.assertEqual(topic_count+1, self.tm.get_topics().count())
         reifiable.set_reifier(None)
@@ -98,7 +98,7 @@ class TopicRemovableConstraintTest (TMAPITestCase):
     def test_used_as_topic_map_reifier (self):
         """Topic map reifier removable constraint test."""
         self._test_reifiable(self.tm)
-        
+
     def test_used_as_association_type (self):
         """Association type removable constraint test."""
         self._test_typed(self.create_association())
@@ -161,7 +161,7 @@ class TopicRemovableConstraintTest (TMAPITestCase):
         try:
             topic.remove()
             self.fail('The topic is used as a topic type')
-        except TopicInUseException, ex:
+        except TopicInUseException as ex:
             self.assertEqual(topic, ex.get_reporter())
         self.assertEqual(2, self.tm.get_topics().count())
         topic2.remove_type(topic)
@@ -184,7 +184,7 @@ class TopicRemovableConstraintTest (TMAPITestCase):
         try:
             topic.remove()
             self.fail('The topic is used as a player')
-        except TopicInUseException, ex:
+        except TopicInUseException as ex:
             self.assertEqual(topic, ex.get_reporter())
         role.set_player(self.tm.create_topic())
         self.assertEqual(4, self.tm.get_topics().count())

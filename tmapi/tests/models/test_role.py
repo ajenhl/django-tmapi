@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class RoleTest (TMAPITestCase):
@@ -40,7 +40,7 @@ class RoleTest (TMAPITestCase):
         role.remove()
         self.assertEqual(0, parent.get_roles().count(),
                          'Expected role list size to decrement for association')
-        
+
     def test_role_player_set_get (self):
         association = self.create_association()
         self.assertEqual(0, association.get_roles().count(),

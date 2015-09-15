@@ -13,20 +13,19 @@
 # limitations under the License.
 
 import unicodedata
-import urllib
-import urlparse
+import urllib.parse
 
 from tmapi.exceptions import MalformedIRIException
 
 
-class LocatorBase (object):
+class LocatorBase:
 
     """Immutable representation of an IRI."""
 
     def generate_forms (self, reference):
         self._reference = self.unnormalise(reference)
         self._external = self.normalise(self._reference)
-        
+
     def get_reference (self):
         """Returns a lexical representation of the IRI.
 
@@ -46,8 +45,8 @@ class LocatorBase (object):
         :rtype: `Locator`
 
         """
-        return Locator(urlparse.urljoin(self._external, reference))
-    
+        return Locator(urllib.parse.urljoin(self._external, reference))
+
     def to_external_form (self):
         """Returns the external form of the IRI.
 
@@ -60,23 +59,20 @@ class LocatorBase (object):
         return self._external
 
     def normalise (self, reference):
-        parts = list(urlparse.urlsplit(reference))
+        parts = list(urllib.parse.urlsplit(str(reference)))
         if not parts[0]:
             raise MalformedIRIException('IRI has no protocol')
-        parts[2] = urllib.quote(parts[2], '/;')
-        url = unicode(urlparse.urlunsplit(parts), 'utf-8', 'replace')
+        parts[2] = urllib.parse.quote(parts[2], '/;')
+        url = urllib.parse.urlunsplit(parts)
         if reference.endswith('?'):
             url = url + '?'
         elif reference.endswith('#'):
             url = url + '#'
         return url
-    
+
     def unnormalise (self, reference):
-        if not isinstance(reference, unicode):
-            reference = unicode(urllib.unquote(reference), 'utf-8', 'replace')
-        else:
-            reference = urllib.unquote(reference)
-        return unicodedata.normalize('NFC', reference).encode('utf-8')
+        reference = urllib.parse.unquote(str(reference))
+        return unicodedata.normalize('NFC', reference)
 
     def __eq__ (self, other):
         if not isinstance(other, LocatorBase):
@@ -92,5 +88,5 @@ class Locator (LocatorBase):
     def __init__ (self, reference):
         self.generate_forms(reference)
 
-    def __unicode__ (self):
+    def __str__ (self):
         return self._reference

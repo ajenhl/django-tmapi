@@ -19,11 +19,11 @@ from tmapi.constants import AUTOMERGE_FEATURE_STRING, \
 from tmapi.exceptions import FeatureNotRecognizedException, \
     FeatureNotSupportedException
 
-from tmapi_feature import TMAPIFeature
-from topic_map_system import TopicMapSystem
+from .tmapi_feature import TMAPIFeature
+from .topic_map_system import TopicMapSystem
 
 
-class TopicMapSystemFactory (object):
+class TopicMapSystemFactory:
 
     """This factory class provides access to a topic map system.
 
@@ -44,7 +44,7 @@ class TopicMapSystemFactory (object):
         TYPE_INSTANCE_ASSOCIATIONS_FEATURE_STRING: [False, False],
         }
     _properties = {}
-    
+
     def get_feature (self, feature_name):
         """Returns the particular feature requested for in the
         underlying implementation of `TopicMapSystem`.
@@ -74,7 +74,7 @@ class TopicMapSystemFactory (object):
 
         """
         return self._properties.get(property_name, None)
-    
+
     def has_feature (self, feature_name):
         """Returns if the particular feature is supported by the
         `TopicMapSystem`.
@@ -113,7 +113,7 @@ class TopicMapSystemFactory (object):
 
         """
         return TopicMapSystemFactory()
-    
+
     def new_topic_map_system (self):
         """Creates a new `TopicMapSystem` instance using the currently
         configured factory parameters.
@@ -123,7 +123,7 @@ class TopicMapSystemFactory (object):
         """
         tms = TopicMapSystem()
         tms.save()
-        for feature_string, values in self._features.items():
+        for feature_string, values in list(self._features.items()):
             feature = TMAPIFeature(feature_string=feature_string,
                                    topic_map_system=tms, value=values[0])
             feature.save()
@@ -172,4 +172,3 @@ class TopicMapSystemFactory (object):
 
         """
         raise Exception('Not yet implemented')
-

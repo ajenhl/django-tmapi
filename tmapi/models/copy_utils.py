@@ -22,9 +22,9 @@ project (http://tinytim.sourceforget.net/).
 
 """
 
-from topic import Topic
-from merge_utils import move_role_characteristics
-from signature import generate_association_signature, generate_name_signature, \
+from .topic import Topic
+from .merge_utils import move_role_characteristics
+from .signature import generate_association_signature, generate_name_signature, \
     generate_occurrence_signature, generate_variant_signature
 
 def copy (source, target):

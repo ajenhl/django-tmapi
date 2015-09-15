@@ -17,18 +17,18 @@ from django.db import models
 from tmapi.constants import XSD_ANY_URI, XSD_STRING
 from tmapi.exceptions import ModelConstraintException
 
-from construct_fields import ConstructFields
-from locator import Locator
-from reifiable import Reifiable
-from scoped import Scoped
-from typed import Typed
-from variant import Variant
+from .construct_fields import ConstructFields
+from .locator import Locator
+from .reifiable import Reifiable
+from .scoped import Scoped
+from .typed import Typed
+from .variant import Variant
 
 
 class Name (ConstructFields, Reifiable, Scoped, Typed):
 
     """Represents a topic name item."""
-    
+
     topic = models.ForeignKey('Topic', related_name='names')
     value = models.TextField()
 
@@ -74,7 +74,7 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
         for theme in scope:
             variant.scope.add(theme)
         return variant
-        
+
     def get_parent (self, proxy=None):
         """Returns the `Topic` to which this name belongs.
 
@@ -95,7 +95,7 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
     def get_variants (self):
         """Returns the variants defined for this name."""
         return self.variants.all()
-                
+
     def set_value (self, value):
         """Sets the value of this name. The previous value is overridden."""
         if value is None:
@@ -103,5 +103,5 @@ class Name (ConstructFields, Reifiable, Scoped, Typed):
         self.value = value
         self.save()
 
-    def __unicode__ (self):
+    def __str__ (self):
         return self.value

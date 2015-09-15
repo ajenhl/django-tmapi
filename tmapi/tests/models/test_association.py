@@ -21,7 +21,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class AssociationTest (TMAPITestCase):
@@ -84,7 +84,7 @@ class AssociationTest (TMAPITestCase):
         self.assertFalse(type2 in association.get_role_types())
         role1.remove()
         self.assertEqual(0, association.get_role_types().count())
-        
+
     def test_role_filter (self):
         association = self.create_association()
         type1 = self.create_topic()
@@ -118,7 +118,7 @@ class AssociationTest (TMAPITestCase):
     def test_role_filter_illegal (self):
         # This test is not applicable in this implementation.
         pass
-        
+
     def test_role_creation_invalid_player (self):
         association = self.create_association()
         self.assertEqual(0, association.get_roles().count())

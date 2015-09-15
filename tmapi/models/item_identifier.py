@@ -14,10 +14,10 @@
 
 from django.db import models
 
-from locator import LocatorBase
+from .locator import LocatorBase
 
 
-class ItemIdentifier (LocatorBase, models.Model):
+class ItemIdentifier (models.Model, LocatorBase):
 
     address = models.CharField(max_length=512)
     # Include a reference to the topic map of the construct this
@@ -34,7 +34,7 @@ class ItemIdentifier (LocatorBase, models.Model):
     def __init__ (self, *args, **kwargs):
         super(ItemIdentifier, self).__init__(*args, **kwargs)
         self.generate_forms(self.address)
-        
+
     def save (self, *args, **kwargs):
         super(ItemIdentifier, self).save(*args, **kwargs)
         self.generate_forms(self.address)
@@ -57,5 +57,5 @@ class ItemIdentifier (LocatorBase, models.Model):
                 pass
         return construct
 
-    def __unicode__ (self):
+    def __str__ (self):
         return self.address

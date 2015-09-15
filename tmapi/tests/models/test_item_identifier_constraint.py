@@ -22,7 +22,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 from tmapi.exceptions import IdentityConstraintException
 from tmapi.models import TopicMap
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class ItemIdentifierConstraintTest (TMAPITestCase):
@@ -37,7 +37,7 @@ class ItemIdentifierConstraintTest (TMAPITestCase):
         try:
             tmo.add_item_identifier(iid)
             self.fail('Topic Maps constructs with the same item identifier are not allowed')
-        except IdentityConstraintException, ex:
+        except IdentityConstraintException as ex:
             self.assertEqual(tmo, ex.get_reporter())
             self.assertEqual(association, ex.get_existing())
             self.assertEqual(iid, ex.get_locator())

@@ -14,7 +14,7 @@
 
 from django.db import models
 
-from identifier import Identifier
+from .identifier import Identifier
 
 
 class BaseConstructFields (models.Model):
@@ -32,7 +32,7 @@ class BaseConstructFields (models.Model):
     class Meta:
         abstract = True
         app_label = 'tmapi'
-        
+
     def save (self, *args, **kwargs):
         if not hasattr(self, 'identifier'):
             try:
@@ -62,4 +62,3 @@ class ConstructFields (BaseConstructFields):
     class Meta:
         abstract = True
         app_label = 'tmapi'
-

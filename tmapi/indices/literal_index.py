@@ -47,7 +47,7 @@ class LiteralIndex (Index):
 
         If `value` is a `Locator`, the `Occurrence`s' datatype
         property must be xsd:anyURI.
-        
+
         If `datatype` is not None, the `Occurrence`s returned must be
         of that datatype.
 
@@ -81,7 +81,7 @@ class LiteralIndex (Index):
 
         If `value` is a `Locator`, the `Variant`s' datatype
         property must be xsd:anyURI.
-        
+
         If `datatype` is not None, the `Variant`s returned must be
         of that datatype.
 

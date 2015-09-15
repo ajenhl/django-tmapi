@@ -22,7 +22,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 from tmapi.constants import XSD_ANY_URI
 from tmapi.exceptions import ModelConstraintException
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class NameTest (TMAPITestCase):
@@ -95,7 +95,7 @@ class NameTest (TMAPITestCase):
         # This test is the same as the previous in this
         # implementation.
         pass
-        
+
     def test_variant_creation_illegal_datatype (self):
         # This test is not applicable in this implementation.
         pass

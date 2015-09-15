@@ -16,9 +16,9 @@ from django.db import models
 
 from tmapi.exceptions import ModelConstraintException
 
-from construct_fields import ConstructFields
-from reifiable import Reifiable
-from typed import Typed
+from .construct_fields import ConstructFields
+from .reifiable import Reifiable
+from .typed import Typed
 
 
 class Role (ConstructFields, Reifiable, Typed):

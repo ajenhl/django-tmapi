@@ -14,16 +14,16 @@
 
 from tmapi.exceptions import ModelConstraintException
 
-from construct_fields import ConstructFields
-from reifiable import Reifiable
-from role import Role
-from scoped import Scoped
-from topic import Topic
-from typed import Typed
+from .construct_fields import ConstructFields
+from .reifiable import Reifiable
+from .role import Role
+from .scoped import Scoped
+from .topic import Topic
+from .typed import Typed
 
 
 class Association (ConstructFields, Reifiable, Scoped, Typed):
-    
+
     class Meta:
         app_label = 'tmapi'
 
@@ -59,7 +59,7 @@ class Association (ConstructFields, Reifiable, Scoped, Typed):
 
         """
         return self.topic_map
-        
+
     def get_roles (self, role_type=None):
         """Returns the `Role`s participating in this association.
 
@@ -69,7 +69,7 @@ class Association (ConstructFields, Reifiable, Scoped, Typed):
         :param role_type: the type of the `Role` instances to be returned
         :type role_type: `Topic`
         :rtype: `QuerySet` of `Role`s
-        
+
         """
         if role_type is None:
             roles = self.roles.all()

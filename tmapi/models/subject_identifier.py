@@ -14,10 +14,10 @@
 
 from django.db import models
 
-from locator import LocatorBase
+from .locator import LocatorBase
 
 
-class SubjectIdentifier (LocatorBase, models.Model):
+class SubjectIdentifier (models.Model, LocatorBase):
 
     topic = models.ForeignKey('Topic', related_name='subject_identifiers')
     address = models.CharField(db_index=True, max_length=512)
@@ -35,5 +35,5 @@ class SubjectIdentifier (LocatorBase, models.Model):
         super(SubjectIdentifier, self).save(*args, **kwargs)
         self.generate_forms(self.address)
 
-    def __unicode__ (self):
+    def __str__ (self):
         return self.address

@@ -22,7 +22,7 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 from tmapi.exceptions import ModelConstraintException
 from tmapi.models import Variant
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class ScopedTest (TMAPITestCase):

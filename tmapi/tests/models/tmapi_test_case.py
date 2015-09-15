@@ -27,7 +27,7 @@ from tmapi.models import TopicMapSystemFactory
 class TMAPITestCase (TestCase):
 
     DEFAULT_ADDRESS = 'http://www.tmapi.org/tmapi2.0'
-    
+
     def setUp (self):
         factory = TopicMapSystemFactory.new_instance()
         self.tms = factory.new_topic_map_system()
@@ -41,7 +41,7 @@ class TMAPITestCase (TestCase):
 
         """
         return self.tm.create_topic()
-        
+
     def create_association (self):
         """Creates an association with a random type and no roles.
 
@@ -49,7 +49,7 @@ class TMAPITestCase (TestCase):
 
         """
         return self.tm.create_association(self.create_topic())
-    
+
     def create_role (self):
         """Creates a role which is part of a random association with a
         random player and type.

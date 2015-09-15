@@ -22,14 +22,14 @@ that come with the TMAPI 2.0 distribution (http://www.tmapi.org/2.0/).
 from tmapi.exceptions import IdentityConstraintException
 from tmapi.models import TopicMapSystemFactory
 
-from tmapi_test_case import TMAPITestCase
+from .tmapi_test_case import TMAPITestCase
 
 
 class TopicMergeDetectionTestCase (TMAPITestCase):
 
     def get_automerge_enabled (self):
         return None
-    
+
     def setUp (self):
         self.automerge = self.get_automerge_enabled()
         factory = TopicMapSystemFactory.new_instance()
@@ -56,7 +56,7 @@ class TopicMergeDetectionTestCase (TMAPITestCase):
         try:
             topic2.add_subject_identifier(loc)
             if not self.automerge:
-                self.fail('The duplicate subject identifier "' + unicode(loc) +
+                self.fail('The duplicate subject identifier "' + str(loc) +
                           '" is not detected')
             else:
                 self.assertEqual(1, self.tm.get_topics().count())
@@ -96,7 +96,7 @@ class TopicMergeDetectionTestCase (TMAPITestCase):
         try:
             topic2.add_subject_locator(loc)
             if not self.automerge:
-                self.fail('The duplicate subject locator "' + unicode(loc) +
+                self.fail('The duplicate subject locator "' + str(loc) +
                           '" is not detected')
             else:
                 self.assertEqual(1, self.tm.get_topics().count())
@@ -137,7 +137,7 @@ class TopicMergeDetectionTestCase (TMAPITestCase):
         try:
             topic2.add_item_identifier(loc)
             if not self.automerge:
-                self.fail('A topic with a subject identifier equal to the item identifier "' + unicode(loc) + '" exists')
+                self.fail('A topic with a subject identifier equal to the item identifier "' + str(loc) + '" exists')
             else:
                 self.assertEqual(1, self.tm.get_topics().count())
         except IdentityConstraintException:
@@ -183,12 +183,12 @@ class TopicMergeDetectionTestCase (TMAPITestCase):
         try:
             topic2.add_subject_identifier(loc)
             if not self.automerge:
-                self.fail('A topic with an item identifier equal to the subject identifier "' + unicode(loc) + '" exists')
+                self.fail('A topic with an item identifier equal to the subject identifier "' + str(loc) + '" exists')
             else:
                 self.assertEqual(1, self.tm.get_topics().count())
         except IdentityConstraintException:
             if self.automerge:
-                self.fail('Expected a transparent merge for a topic with an item identifier equal to the subject identifier "' + unicode(loc))
+                self.fail('Expected a transparent merge for a topic with an item identifier equal to the subject identifier "' + str(loc))
             self.assertEqual(2, self.tm.get_topics().count())
             self.assertTrue(loc in topic1.get_item_identifiers())
             self.assertFalse(loc in topic2.get_subject_identifiers())

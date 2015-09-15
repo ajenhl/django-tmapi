@@ -16,7 +16,7 @@ from django.db import models
 
 from tmapi.exceptions import ModelConstraintException
 
-from construct import Construct
+from .construct import Construct
 
 
 class Reifiable (Construct, models.Model):

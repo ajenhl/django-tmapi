@@ -15,16 +15,16 @@
 from tmapi.exceptions import IdentityConstraintException, \
     ModelConstraintException
 
-from item_identifier import ItemIdentifier
+from .item_identifier import ItemIdentifier
 
 
-class Construct (object):
+class Construct:
 
     # Properly item_identifier and topic_map fields should be defined
     # here. However, due to inheritance, this causes Django problems,
     # and so they are defined separately in ConstructFields and the
     # specific models inherit from that class directly.
-    
+
     def add_item_identifier (self, item_identifier):
         """Adds an item identifier.
 
@@ -38,7 +38,7 @@ class Construct (object):
         :type item_identifier: `Locator`
         :raises `IdentityConstraintException`: if another construct
           has an item identifier which is equal to `item_identifier`
-        
+
         """
         if item_identifier is None:
             raise ModelConstraintException(
@@ -76,7 +76,7 @@ class Construct (object):
         same topic map has the same ID.
 
         :rtype: String
-        
+
         """
         return self.identifier.pk
 
@@ -87,7 +87,7 @@ class Construct (object):
 
         """
         return self.item_identifiers.all()
-    
+
     def get_parent (self):
         """Returns the parent of this construct.
 
@@ -123,7 +123,7 @@ class Construct (object):
         # relationship, so they need to be explicitly deleted.
         self.get_item_identifiers().delete()
         self.delete()
-    
+
     def remove_item_identifier (self, item_identifier):
         """Remove an item identifier.
 
