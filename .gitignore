@@ -1,2 +1,5 @@
 *~
 *.pyc
+build
+dist
+django_tmapi.egg-info
