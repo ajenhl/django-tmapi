@@ -125,3 +125,11 @@ class ReifiableTest (TMAPITestCase):
 
     def test_variant_reification_collision (self):
         self._test_reification_collision(self.create_variant())
+
+    def test_get_set_reifier (self):
+        association = self.create_association()
+        self.assertEqual(None, association.get_reifier())
+        reifier = association.get_or_set_reifier()
+        self.assertEqual(reifier, association.get_reifier())
+        reifier2 = association.get_or_set_reifier()
+        self.assertIs(reifier, reifier2)

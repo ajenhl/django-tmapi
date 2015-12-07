@@ -39,7 +39,22 @@ class Reifiable (Construct, models.Model):
         """
         return self.reifier
 
+    def get_or_set_reifier (self):
+        """Returns the reifier of this construct, either returning the
+        existing reifier or a new `Topic`.
+
+        :rtype: `Topic`
+
+        """
+        reifier = self.get_reifier()
+        if reifier is None:
+            tm = self.get_topic_map()
+            reifier = tm.create_topic()
+            self.set_reifier(reifier)
+        return reifier
+
     def set_reifier (self, reifier):
+
         """Sets the reifier of this consutrct.
 
         The specified reifier **must not** reify another information
